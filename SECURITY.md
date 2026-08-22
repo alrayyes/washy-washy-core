@@ -6,9 +6,14 @@ anywhere.
 
 If you find something that matters — a crafted input that causes something
 worse than a thrown error, a supply-chain concern in how this package is
-built or published — report it privately through
-[GitHub's security advisories](https://github.com/alrayyes/washy-washy-core/security/advisories/new)
-rather than in a public issue, and I will look at it.
+built or published — report it privately using
+[GitHub's private vulnerability reporting](https://github.com/alrayyes/washy-washy-core/security/advisories/new)
+rather than in a public issue.
+
+Include reproduction steps and the affected version. Expect an initial
+response within 5 business days.
+
+## Supported versions
 
 Only the latest published version is supported. There is no release old
 enough to need a backport.

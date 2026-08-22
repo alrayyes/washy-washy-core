@@ -10,6 +10,13 @@ generator. This package holds no rendering or file I/O — just the pure logic
 a CSV/JSON chart is checked and reasoned about with, shared by the CLI, the
 web app, and [`@washy-washy/pdf`](https://github.com/alrayyes/washy-washy-pdf).
 
+## Requirements
+
+- Node.js 18+, Bun, or any other runtime with modern ESM/`exports` map
+  support.
+- No system packages, no external services, no credentials — this package
+  does no file I/O and no network access.
+
 ## Install
 
 ```sh
@@ -77,3 +84,7 @@ bun run build    # emit dist/ (tsdown)
 ```
 
 See [CONTRIBUTING.md](CONTRIBUTING.md).
+
+## License
+
+[GPL-3.0-or-later](LICENSE).
