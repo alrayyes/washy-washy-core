@@ -18,6 +18,8 @@ function pile(overrides: Partial<Instruction> = {}): Instruction {
     colourGroup: "colour",
     mixTags: [],
     notes: "",
+    referenceName: "",
+    referenceLink: "",
     ...overrides,
   };
 }

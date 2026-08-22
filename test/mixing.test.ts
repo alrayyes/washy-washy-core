@@ -27,6 +27,8 @@ function pile(overrides: Partial<Instruction> = {}): Instruction {
     colourGroup: "colour",
     mixTags: [],
     notes: "",
+    referenceName: "",
+    referenceLink: "",
     ...overrides,
   };
 }
@@ -121,6 +123,7 @@ describe("cardGroups", () => {
       { ironingNotes: "Carefully" },
       { drying: "On a line" },
       { notes: "Beware" },
+      { referenceName: "Which?", referenceLink: "https://example.com" },
     ];
     for (const difference of prose) {
       const groups = cardGroups([

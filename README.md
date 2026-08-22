@@ -62,6 +62,10 @@ const instructions = chartFromJson(jsonFromStorage, machine);
 
 ### What's in it
 
+- Every chart row carries an optional `referenceName`/`referenceLink` pair —
+  who to credit for a care instruction that isn't obvious from the garment
+  itself ("the manufacturer says wash these alone"), and a link backing it
+  up. Both are empty strings when there's nothing to cite.
 - **`parseMachine`** validates a machine description (washer programmes,
   temperatures, spins, options; iron thermostat positions) and hands back a
   typed `Machine`. Every failure names the field that's wrong.

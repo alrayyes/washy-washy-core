@@ -35,6 +35,8 @@ const ROW = {
   colour_group: "dark",
   mix_tags: "dye-bleeder",
   notes: "",
+  reference_name: "",
+  reference_link: "",
 };
 
 function config(overrides: { machine?: unknown; chart?: unknown } = {}) {

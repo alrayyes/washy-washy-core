@@ -18,6 +18,8 @@ export const COLUMNS = [
   "colour_group",
   "mix_tags",
   "notes",
+  "reference_name",
+  "reference_link",
 ] as const;
 
 /** One row, keyed the same way as a CSV column and the chart's JSON Schema. */
@@ -133,6 +135,8 @@ export function instructionsFromRows(
       colourGroup: oneOf<ColourGroup>(row, "colour_group", record.colour_group ?? "", colourGroups),
       mixTags: tags,
       notes: record.notes ?? "",
+      referenceName: record.reference_name ?? "",
+      referenceLink: record.reference_link ?? "",
     };
   });
 }
@@ -162,6 +166,8 @@ export function rowsFromInstructions(instructions: Instruction[]): Row[] {
     colour_group: instruction.colourGroup,
     mix_tags: instruction.mixTags.join("|"),
     notes: instruction.notes,
+    reference_name: instruction.referenceName,
+    reference_link: instruction.referenceLink,
   }));
 }
 

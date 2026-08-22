@@ -23,10 +23,10 @@ const machine = parseMachine({
 
 const HEADER =
   "clothing_type,detergent,fabric_softener,temperature,spin,duration,program,options," +
-  "ironing,ironing_notes,iron_setting,drying,colour_group,mix_tags,notes";
+  "ironing,ironing_notes,iron_setting,drying,colour_group,mix_tags,notes,reference_name,reference_link";
 
 const ROW =
-  "Dark,Dark liquid,no,30,800,~2:00,Cottons,Extra Rinse,yes,Inside out,2,Line dry,dark,dye-bleeder,";
+  "Dark,Dark liquid,no,30,800,~2:00,Cottons,Extra Rinse,yes,Inside out,2,Line dry,dark,dye-bleeder,,,";
 
 function csv(row = ROW): string {
   return `${HEADER}\n${row}\n`;
@@ -97,6 +97,24 @@ describe("parseInstructions", () => {
     expect(() => parseInstructions(csv(ROW.replace(",no,", ",maybe,")), machine)).toThrow(
       /column "fabric_softener"/,
     );
+  });
+
+  test("reads an optional reference name and link", () => {
+    const row = ROW.replace(
+      /,,,$/,
+      ",,Which?,https://www.which.co.uk/reviews/washing-machines/article/washing-machine-temperature-guide-aLiyf2p96y4d",
+    );
+    const [item] = parseInstructions(csv(row), machine);
+    expect(item?.referenceName).toBe("Which?");
+    expect(item?.referenceLink).toBe(
+      "https://www.which.co.uk/reviews/washing-machines/article/washing-machine-temperature-guide-aLiyf2p96y4d",
+    );
+  });
+
+  test("leaves the reference empty when a row doesn't cite one", () => {
+    const [item] = parseInstructions(csv(), machine);
+    expect(item?.referenceName).toBe("");
+    expect(item?.referenceLink).toBe("");
   });
 
   test("rejects a blank clothing type", () => {
