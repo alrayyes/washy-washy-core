@@ -48,6 +48,15 @@ schema` regenerates it from the `Config` type via
   own test fixtures. If a future ticket asks to re-add them, that's a real
   architecture question (this package doing file I/O/path conventions at
   all), not a missing export to restore reflexively.
+- **`configToJson`'s output is plain `JSON.stringify(..., null, 2)`, not
+  Biome-formatted.** A consumer that writes its result straight to a file in
+  a Biome-linted repo gets an immediate lint failure — short arrays that
+  Biome collapses onto one line come out one-per-line instead. Not a bug to
+  fix here: matching a specific formatter's opinions in a generic
+  serializer would be fragile. The fix is on the consumer's side — pipe the
+  written file through its own formatter after writing, same as `bun run
+schema` does for `schema/config.schema.json` in this repo. Confirmed by
+  `washy-washy-cli` hitting this for real in its migration script.
 - **The `release` job's first-ever run needs a human, twice.** Once for a
   one-time manual `npm publish --access public` from a local machine (npm's
   Trusted Publishing can't be linked before the scoped package exists at all
