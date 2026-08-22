@@ -3,7 +3,14 @@ import type { Machine } from "./machine";
 import { instructionsFromRows } from "./rows";
 import type { Instruction } from "./types";
 
-/** Parses the instruction CSV. See `instructionsFromRows` for the row rules. */
+/**
+ * Parses the instruction CSV. See `instructionsFromRows` for the row rules.
+ *
+ * @example
+ * ```ts
+ * const instructions = parseInstructions(csvFileContents, machine);
+ * ```
+ */
 export function parseInstructions(source: string, machine: Machine): Instruction[] {
   const records: Record<string, string>[] = parse(source, {
     columns: true,

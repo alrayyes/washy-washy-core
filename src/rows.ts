@@ -64,6 +64,11 @@ function boolean(row: number, column: string, value: string): boolean {
  * programme name fails here rather than producing a PDF that tells you to turn
  * the dial to a position that does not exist — and so does a chart written for
  * a different machine than the one you passed.
+ *
+ * @example
+ * ```ts
+ * const instructions = instructionsFromRows(JSON.parse(jsonFromStorage), machine);
+ * ```
  */
 export function instructionsFromRows(
   rows: Record<string, string>[],
@@ -132,7 +137,14 @@ export function instructionsFromRows(
   });
 }
 
-/** The reverse of `instructionsFromRows` — what a JSON export writes out. */
+/**
+ * The reverse of `instructionsFromRows` — what a JSON export writes out.
+ *
+ * @example
+ * ```ts
+ * const rows = rowsFromInstructions(instructions);
+ * ```
+ */
 export function rowsFromInstructions(instructions: Instruction[]): Row[] {
   return instructions.map((instruction) => ({
     clothing_type: instruction.clothingType,
@@ -157,12 +169,24 @@ export function rowsFromInstructions(instructions: Instruction[]): Row[] {
  * The JSON interchange format for a chart — the same row shape
  * a chart's JSON Schema describes, so a file written here validates against
  * it exactly as a CSV does.
+ *
+ * @example
+ * ```ts
+ * const json = chartToJson(instructions);
+ * ```
  */
 export function chartToJson(instructions: Instruction[]): string {
   return `${JSON.stringify(rowsFromInstructions(instructions), null, 2)}\n`;
 }
 
-/** The other half of `chartToJson`. Throws the same errors `parseInstructions` does. */
+/**
+ * The other half of `chartToJson`. Throws the same errors `parseInstructions` does.
+ *
+ * @example
+ * ```ts
+ * const instructions = chartFromJson(jsonFromStorage, machine);
+ * ```
+ */
 export function chartFromJson(source: string, machine: Machine): Instruction[] {
   let rows: unknown;
   try {

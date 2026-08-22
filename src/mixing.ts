@@ -39,6 +39,12 @@ function compatibleColours(a: Instruction, b: Instruction): boolean {
  * The order matters: the reason reported is the one you would want to hear
  * first. "Wash it alone" beats "the spin speed differs", because changing the
  * spin speed would not help.
+ *
+ * @example
+ * ```ts
+ * mixBlocker(towels, socks); // "lint" — towels shed onto everything else
+ * mixBlocker(socks, socks2); // null — nothing stops them sharing a drum
+ * ```
  */
 export function mixBlocker(a: Instruction, b: Instruction): Blocker | null {
   if (a.mixTags.includes("solo") || b.mixTags.includes("solo")) return "solo";
@@ -52,11 +58,24 @@ export function mixBlocker(a: Instruction, b: Instruction): Blocker | null {
   return null;
 }
 
+/**
+ * @example
+ * ```ts
+ * canMix(towels, socks); // false
+ * ```
+ */
 export function canMix(a: Instruction, b: Instruction): boolean {
   return mixBlocker(a, b) === null;
 }
 
-/** Annotates each instruction with the other piles it may share a load with. */
+/**
+ * Annotates each instruction with the other piles it may share a load with.
+ *
+ * @example
+ * ```ts
+ * resolve(instructions)[0].mixesWith; // ["Socks", "Jeans"]
+ * ```
+ */
 export function resolve(instructions: Instruction[]): ResolvedInstruction[] {
   return instructions.map((instruction) => ({
     ...instruction,
@@ -69,6 +88,11 @@ export function resolve(instructions: Instruction[]): ResolvedInstruction[] {
 /**
  * Groups piles that can all be washed together — every member compatible with
  * every other, not merely with the first one it met.
+ *
+ * @example
+ * ```ts
+ * loadGroups(instructions); // [[towels], [socks, jeans], [wool]]
+ * ```
  */
 export function loadGroups<T extends Instruction>(instructions: T[]): T[][] {
   const groups: T[][] = [];
@@ -112,6 +136,12 @@ function washFingerprint(item: Instruction): string {
  * Piles you set the machine and the iron up for identically. Every dial
  * drawing on their cards would be the same drawing, so they get one card
  * listing all the names.
+ *
+ * @example
+ * ```ts
+ * cardGroups(instructions).map((group) => group.map((item) => item.clothingType));
+ * // [["Socks", "Jeans"], ["Towels"]]
+ * ```
  */
 export function cardGroups<T extends Instruction>(instructions: T[]): T[][] {
   return groupBy(instructions, (item) =>
@@ -123,6 +153,11 @@ export function cardGroups<T extends Instruction>(instructions: T[]): T[][] {
  * The same, for a sheet with no iron on it. Dark, Black Socks and Denim each
  * need their own card on the full chart only because they want three different
  * thermostat positions; standing at the machine they are one wash.
+ *
+ * @example
+ * ```ts
+ * washGroups(instructions); // merges piles cardGroups would have split on iron settings alone
+ * ```
  */
 export function washGroups<T extends Instruction>(instructions: T[]): T[][] {
   return groupBy(instructions, washFingerprint);
@@ -137,6 +172,11 @@ export function washGroups<T extends Instruction>(instructions: T[]): T[][] {
  * and the piles are the list under it. `order` is `ironSettingKeys`; a pile you
  * never iron has no position in it and sorts last, which is right — it is the
  * pile you never pick up.
+ *
+ * @example
+ * ```ts
+ * ironGroups(instructions, ironSettingKeys(machine));
+ * ```
  */
 export function ironGroups<T extends Instruction>(
   instructions: T[],
