@@ -74,7 +74,10 @@ const instructions = chartFromJson(jsonFromStorage, machine);
   `configToJson`'s output leads with a `$schema` key
   ([`schema/config.schema.json`](schema/config.schema.json), generated from
   the `Config` type, so it can't drift) — an editor that reads it, VS Code
-  among them, validates and autocompletes the file with no setup.
+  among them, validates and autocompletes the file with no setup. The output
+  is plain `JSON.stringify(..., null, 2)` — if you write it straight to a
+  file in a Biome- or Prettier-linted repo, run your own formatter over it
+  afterward, since a generic serializer can't match either tool's opinions.
 - **`mixBlocker`**/**`canMix`**/**`resolve`** decide whether two piles of
   laundry can share a drum, and why not when they can't.
 - **`cardGroups`**/**`washGroups`**/**`ironGroups`** group instructions the
