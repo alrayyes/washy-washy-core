@@ -41,7 +41,7 @@ jobs:
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           files: coverage/lcov.info
-          fail_ci_if_error: false
+          fail_ci_if_error: true
 
   # Proves the package actually builds and ships the two entry points it
   # claims to, and that the browser one never pulls Buffer/csv-parse in —
