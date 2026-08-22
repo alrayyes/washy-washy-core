@@ -3,6 +3,16 @@ import { instructionsFromRows, rowsFromInstructions } from "./rows";
 import type { Instruction } from "./types";
 
 /**
+ * Where `configToJson` points editors at the real JSON Schema (generated
+ * from the `Config` type — see `schema/config.schema.json` and `bun run
+ * schema`). Unpinned to the package's `latest` npm tag rather than the
+ * running version, matching how most `$schema` URLs work: close enough,
+ * without needing a build-time read of this package's own `package.json`.
+ */
+export const CONFIG_SCHEMA_URL =
+  "https://cdn.jsdelivr.net/npm/@washy-washy/core/schema/config.schema.json";
+
+/**
  * The washing machine and the chart that describes it, in one place. Both
  * halves are exactly what `parseMachine`/`instructionsFromRows` already
  * produce — this is a wrapper around the pair, not a third shape.
@@ -43,7 +53,11 @@ export function parseConfig(value: unknown): Config {
 }
 
 /**
- * The reverse of `parseConfig` — what a JSON export writes out.
+ * The reverse of `parseConfig` — what a JSON export writes out. Leads with a
+ * `$schema` key so an editor that reads it (VS Code among them) validates
+ * and autocompletes the file without the person editing it doing anything.
+ * `parseConfig` ignores the key on the way back in — it never asks for
+ * anything beyond `machine` and `chart`.
  *
  * @example
  * ```ts
@@ -51,7 +65,11 @@ export function parseConfig(value: unknown): Config {
  * ```
  */
 export function configToJson(config: Config): string {
-  const rows = { machine: config.machine, chart: rowsFromInstructions(config.chart) };
+  const rows = {
+    $schema: CONFIG_SCHEMA_URL,
+    machine: config.machine,
+    chart: rowsFromInstructions(config.chart),
+  };
   return `${JSON.stringify(rows, null, 2)}\n`;
 }
 

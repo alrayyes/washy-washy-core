@@ -63,6 +63,11 @@ describe("parseConfig", () => {
     );
   });
 
+  test("ignores a $schema key alongside machine and chart", () => {
+    const parsed = parseConfig({ $schema: "https://example.com/whatever.json", ...config() });
+    expect(parsed.machine.washer.name).toBe("Test Washer");
+  });
+
   test("validates the chart against the embedded machine, not some other one", () => {
     expect(() => parseConfig(config({ chart: [{ ...ROW, program: "Turbo Wash" }] }))).toThrow(
       /column "program"/,
@@ -80,6 +85,15 @@ describe("the JSON config format", () => {
     const original = parseConfig(config());
     const roundTripped = configFromJson(configToJson(original));
     expect(roundTripped).toEqual(original);
+  });
+
+  test("leads with a $schema key an editor can pick up", () => {
+    const original = parseConfig(config());
+    const written = JSON.parse(configToJson(original));
+    expect(Object.keys(written)[0]).toBe("$schema");
+    expect(written.$schema).toBe(
+      "https://cdn.jsdelivr.net/npm/@washy-washy/core/schema/config.schema.json",
+    );
   });
 
   test("rejects invalid JSON", () => {
