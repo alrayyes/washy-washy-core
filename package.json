@@ -7,11 +7,11 @@
     "csv",
     "chart"
   ],
-  "homepage": "https://github.com/alrayyes/washy-washy-sdk#readme",
-  "bugs": "https://github.com/alrayyes/washy-washy-sdk/issues",
+  "homepage": "https://github.com/alrayyes/washy-washy-core#readme",
+  "bugs": "https://github.com/alrayyes/washy-washy-core/issues",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/alrayyes/washy-washy-sdk.git"
+    "url": "git+https://github.com/alrayyes/washy-washy-core.git"
   },
   "license": "GPL-3.0-or-later",
   "type": "module",
