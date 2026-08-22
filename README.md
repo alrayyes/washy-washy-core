@@ -1,5 +1,9 @@
 # @washy-washy/core
 
+[![check](https://github.com/alrayyes/washy-washy-core/actions/workflows/ci.yml/badge.svg)](https://github.com/alrayyes/washy-washy-core/actions/workflows/ci.yml)
+[![codecov](https://codecov.io/gh/alrayyes/washy-washy-core/graph/badge.svg)](https://codecov.io/gh/alrayyes/washy-washy-core)
+[![license](https://img.shields.io/github/license/alrayyes/washy-washy-core)](LICENSE)
+
 Chart parsing, machine validation, and mixing rules for
 [washy-washy](https://github.com/alrayyes/washy-washy-cli), a laundry chart
 generator. This package holds no rendering or file I/O — just the pure logic
