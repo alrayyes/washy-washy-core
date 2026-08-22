@@ -1,13 +1,20 @@
 # Merges here are squashes, so the pull request title becomes the subject of
 # the commit that lands on main, and semantic-release reads nothing else.
+#
+# A maintained action rather than a hand-rolled commitlint pipe: commitlint
+# itself has no PR-title mode, it only ever reads commit objects, so linting
+# a title is always working around that gap somehow. pull_request_target
+# (not pull_request) is what lets this read a fork's PR title without
+# needing to check out that fork's code at all — the title comes off the
+# event payload, not off anything the fork controls.
 name: pr-title
 
 on:
-  pull_request:
-    types: [opened, reopened, synchronize, edited]
+  pull_request_target:
+    types: [opened, reopened, edited, synchronize]
 
 permissions:
-  contents: read
+  pull-requests: read
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number }}
@@ -18,18 +25,19 @@ jobs:
     if: github.actor != 'dependabot[bot]'
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-      - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0
-        with:
-          bun-version: 1.4.0
-      - run: bun install --frozen-lockfile
-      - name: Lint the pull request title
+      - uses: amannn/action-semantic-pull-request@48f256284bd46cdaab1048c3721360e808335d50 # v6.1.1
         env:
-          TITLE: ${{ github.event.pull_request.title }}
-        run: |
-          printf '%s\n' "$TITLE" | bunx --bun commitlint --verbose || {
-            echo "::error::The pull request title is not a Conventional Commit."
-            echo "::error::A squash merge makes it the subject on main, and"
-            echo "::error::semantic-release reads it to decide the next version."
-            exit 1
-          }
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          types: |
+            build
+            chore
+            ci
+            docs
+            feat
+            fix
+            perf
+            refactor
+            revert
+            style
+            test
