@@ -63,6 +63,16 @@ jobs:
           fi
       - run: npm pack --dry-run
 
+  # Public repo, so this is free — catches a pull request introducing a *new*
+  # dependency that's already known-bad at merge time, rather than waiting
+  # for Dependabot's next scheduled scan of what's already pinned.
+  dependency-review:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/dependency-review-action@a1d282b36b6f3519aa1f3fc636f609c47dddb294 # v5.0.0
+
   # The commit-msg hook already reads every message, but a hook is skippable
   # and these messages are load-bearing: semantic-release reads the
   # Conventional Commits that landed to decide the next version.
