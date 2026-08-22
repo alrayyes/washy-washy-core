@@ -5,8 +5,8 @@ JSON you hand it. It runs no server, opens no socket, and sends nothing
 anywhere.
 
 If you find something that matters — a crafted input that causes something
-worse than a thrown error, a supply-chain concern in how this package is
-built or published — report it privately using
+worse than a thrown error, a supply chain concern in how this package is
+built or published — report it privately via
 [GitHub's private vulnerability reporting](https://github.com/alrayyes/washy-washy-core/security/advisories/new)
 rather than in a public issue.
 
