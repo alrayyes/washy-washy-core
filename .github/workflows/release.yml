@@ -27,11 +27,10 @@ jobs:
       contents: write
       issues: write
       pull-requests: write
-      # OIDC token, for provenance regardless of how the publish itself
-      # authenticates. Trusted Publishing (no NPM_TOKEN needed at all) can't
-      # be linked on npmjs.com until the package exists there once already —
-      # so NPM_TOKEN bootstraps the first publish, and once @washy-washy/core
-      # exists, link Trusted Publishing and drop the secret. See #2.
+      # OIDC token for npm Trusted Publishing + provenance. Linked on
+      # npmjs.com to this repo + this workflow file, after a one-time
+      # manual bootstrap publish (Trusted Publishing can't be linked
+      # before a scoped package exists at all — see #2).
       id-token: write
     steps:
       - name: Is the release token here?
@@ -77,4 +76,3 @@ jobs:
         env:
           LEFTHOOK: "0"
           GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
