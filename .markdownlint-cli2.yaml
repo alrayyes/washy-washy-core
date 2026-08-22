@@ -1,0 +1,24 @@
+config:
+  # Prose wraps where it reads best; a hard column limit fights that. Same
+  # call washy-washy-cli made, for the same reason.
+  MD013: false
+  # The pull request template opens with a section heading, not a title.
+  MD041: false
+
+  # Below here: layout Prettier already decides. Prettier runs first and
+  # markdownlint judges what it produced, so leaving these on would only
+  # give us a hook that fails twice and fixes nothing.
+  MD004: false
+  MD007: false
+  MD012: false
+  MD049: false
+  MD050: false
+
+globs:
+  - "**/*.md"
+
+ignores:
+  - "**/node_modules/**"
+  # Written by semantic-release from the commit subjects, and committed by
+  # the release job without passing through any hook.
+  - "CHANGELOG.md"
