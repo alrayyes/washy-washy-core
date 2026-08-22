@@ -1,6 +1,7 @@
 # @washy-washy/core
 
 [![check](https://github.com/alrayyes/washy-washy-core/actions/workflows/ci.yml/badge.svg)](https://github.com/alrayyes/washy-washy-core/actions/workflows/ci.yml)
+[![npm](https://img.shields.io/npm/v/%40washy-washy%2Fcore)](https://www.npmjs.com/package/@washy-washy/core)
 [![Codecov](https://codecov.io/gh/alrayyes/washy-washy-core/graph/badge.svg)](https://codecov.io/gh/alrayyes/washy-washy-core)
 [![license](https://img.shields.io/github/license/alrayyes/washy-washy-core)](LICENSE)
 
