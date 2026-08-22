@@ -1,3 +1,13 @@
+## [1.3.0](https://github.com/alrayyes/washy-washy-core/compare/v1.2.0...v1.3.0) (2026-08-22)
+
+### Features
+
+* add an optional reference name and link to each chart row ([#25](https://github.com/alrayyes/washy-washy-core/issues/25)) ([3c71116](https://github.com/alrayyes/washy-washy-core/commit/3c7111682bacf4b87f7bc4299a6f127b1db2af9c))
+
+### Bug Fixes
+
+* teach LTeX the hyphenated compounds and serializer it flags ([#26](https://github.com/alrayyes/washy-washy-core/issues/26)) ([b3ec853](https://github.com/alrayyes/washy-washy-core/commit/b3ec8530ed7728358f03bdb358d6cdf2085ce701)), closes [#24](https://github.com/alrayyes/washy-washy-core/issues/24)
+
 ## [1.2.0](https://github.com/alrayyes/washy-washy-core/compare/v1.1.0...v1.2.0) (2026-08-22)
 
 ### Features
