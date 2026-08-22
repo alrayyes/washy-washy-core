@@ -80,6 +80,7 @@ const instructions = chartFromJson(jsonFromStorage, machine);
 Every exported function and type carries a TSDoc comment with a runnable
 example — that's your editor's hover, and it's also the generated
 [API reference](https://alrayyes.github.io/washy-washy-core/).
+[`@washy-washy/pdf`](https://alrayyes.github.io/washy-washy-pdf/) has the same.
 
 ## Development
 
