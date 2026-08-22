@@ -67,6 +67,9 @@ const instructions = chartFromJson(jsonFromStorage, machine);
 - **`parseInstructions`** (CSV) and **`chartFromJson`**/**`chartToJson`**
   (JSON) parse a chart against a `Machine`, rejecting any row that asks for a
   setting the machine doesn't have.
+- **`parseConfig`**/**`configFromJson`**/**`configToJson`** do the same for a
+  machine and a chart together, as one `{ machine, chart }` object — the
+  chart is always validated against the machine it's embedded with.
 - **`mixBlocker`**/**`canMix`**/**`resolve`** decide whether two piles of
   laundry can share a drum, and why not when they can't.
 - **`cardGroups`**/**`washGroups`**/**`ironGroups`** group instructions the
