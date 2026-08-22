@@ -1,0 +1,200 @@
+{
+  "$ref": "#/definitions/Config",
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "definitions": {
+    "ColourGroup": {
+      "enum": ["white", "colour", "dark", "sport", "any"],
+      "type": "string"
+    },
+    "Config": {
+      "additionalProperties": false,
+      "description": "The washing machine and the chart that describes it, in one place. Both halves are exactly what `parseMachine`/`instructionsFromRows` already produce — this is a wrapper around the pair, not a third shape.",
+      "properties": {
+        "chart": {
+          "items": {
+            "$ref": "#/definitions/Instruction"
+          },
+          "type": "array"
+        },
+        "machine": {
+          "$ref": "#/definitions/Machine"
+        }
+      },
+      "required": ["machine", "chart"],
+      "type": "object"
+    },
+    "Instruction": {
+      "additionalProperties": false,
+      "description": "One CSV row: everything needed to wash, iron and dry one pile of laundry.\n\nThe machine-facing fields are plain strings rather than unions, because what counts as valid depends on the machine file you point this at. `csv.ts` checks each of them against that machine as it parses, so nothing downstream has to wonder whether a programme name exists.",
+      "properties": {
+        "clothingType": {
+          "type": "string"
+        },
+        "colourGroup": {
+          "$ref": "#/definitions/ColourGroup"
+        },
+        "detergent": {
+          "type": "string"
+        },
+        "drying": {
+          "type": "string"
+        },
+        "duration": {
+          "type": "string"
+        },
+        "fabricSoftener": {
+          "type": "boolean"
+        },
+        "ironSetting": {
+          "description": "Thermostat position. Empty when `ironing` is false.",
+          "type": "string"
+        },
+        "ironing": {
+          "description": "Whether this pile gets ironed at all.",
+          "type": "boolean"
+        },
+        "ironingNotes": {
+          "description": "How to iron it, or why you don't. Free prose and often empty, because most of what there is to say about a pile nobody irons is already said by `ironing` being false.",
+          "type": "string"
+        },
+        "mixTags": {
+          "items": {
+            "$ref": "#/definitions/MixTag"
+          },
+          "type": "array"
+        },
+        "notes": {
+          "type": "string"
+        },
+        "options": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "program": {
+          "type": "string"
+        },
+        "spin": {
+          "type": "string"
+        },
+        "temperature": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "clothingType",
+        "detergent",
+        "fabricSoftener",
+        "temperature",
+        "spin",
+        "duration",
+        "program",
+        "options",
+        "ironing",
+        "ironingNotes",
+        "ironSetting",
+        "drying",
+        "colourGroup",
+        "mixTags",
+        "notes"
+      ],
+      "type": "object"
+    },
+    "Iron": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "settings": {
+          "description": "Thermostat positions in order, coolest first.",
+          "items": {
+            "$ref": "#/definitions/IronSetting"
+          },
+          "type": "array"
+        }
+      },
+      "required": ["name", "settings"],
+      "type": "object"
+    },
+    "IronSetting": {
+      "additionalProperties": false,
+      "properties": {
+        "detail": {
+          "type": "string"
+        },
+        "dots": {
+          "type": "string"
+        },
+        "key": {
+          "type": "string"
+        },
+        "label": {
+          "type": "string"
+        },
+        "steam": {
+          "type": "boolean"
+        }
+      },
+      "required": ["key", "dots", "label", "detail", "steam"],
+      "type": "object"
+    },
+    "Machine": {
+      "additionalProperties": false,
+      "properties": {
+        "iron": {
+          "$ref": "#/definitions/Iron"
+        },
+        "washer": {
+          "$ref": "#/definitions/Washer"
+        }
+      },
+      "required": ["washer", "iron"],
+      "type": "object"
+    },
+    "MixTag": {
+      "enum": ["lint-shedder", "lint-magnet", "dye-bleeder", "solo"],
+      "type": "string"
+    },
+    "Washer": {
+      "additionalProperties": false,
+      "description": "The appliances a chart is drawn for, as data rather than code.\n\nEverything the PDFs render — dial angles, which chips exist, what a valid CSV value is — comes from a machine file, so pointing this at a different washing machine is editing JSON rather than editing TypeScript. The labels in that file are copied off the fascia in whatever language it is printed in, and nothing here ever translates them: a chart that says \"Cottons\" when the dial says \"Katoen\" is worse than no chart, because you have to translate it back while standing in front of the machine.",
+      "properties": {
+        "capacity": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "options": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "programs": {
+          "description": "Dial labels in physical order from twelve o'clock, clockwise. Index is the angle.",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "spins": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "temperatures": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        }
+      },
+      "required": ["name", "capacity", "programs", "temperatures", "spins", "options"],
+      "type": "object"
+    }
+  }
+}

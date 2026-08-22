@@ -71,6 +71,10 @@ const instructions = chartFromJson(jsonFromStorage, machine);
 - **`parseConfig`**/**`configFromJson`**/**`configToJson`** do the same for a
   machine and a chart together, as one `{ machine, chart }` object — the
   chart is always validated against the machine it's embedded with.
+  `configToJson`'s output leads with a `$schema` key
+  ([`schema/config.schema.json`](schema/config.schema.json), generated from
+  the `Config` type, so it can't drift) — an editor that reads it, VS Code
+  among them, validates and autocompletes the file with no setup.
 - **`mixBlocker`**/**`canMix`**/**`resolve`** decide whether two piles of
   laundry can share a drum, and why not when they can't.
 - **`cardGroups`**/**`washGroups`**/**`ironGroups`** group instructions the

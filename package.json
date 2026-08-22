@@ -27,12 +27,13 @@
   },
   "files": [
     "dist",
+    "schema",
     "README.md",
     "LICENSE"
   ],
   "scripts": {
     "build": "tsdown",
-    "check": "bun run lint && bun run lint:md && bun run lint:yaml && bun run lint:package-json && bun run lint:prose && bun run typecheck && bun test",
+    "check": "bun run lint && bun run lint:md && bun run lint:yaml && bun run lint:package-json && bun run lint:prose && bun run lint:schema && bun run typecheck && bun test",
     "docs": "typedoc",
     "format": "prettier --write .",
     "lint": "biome check .",
@@ -41,9 +42,11 @@
     "lint:package-json": "sort-package-json --check",
     "lint:prose": ".tools/vale --glob='!{styles/**,CHANGELOG.md}' --minAlertLevel=error .",
     "lint:prose:advice": ".tools/vale --glob='!{styles/**,CHANGELOG.md}' .",
+    "lint:schema": "bun run schema && git diff --exit-code schema/",
     "lint:yaml": "prettier --check \"**/*.{yml,yaml}\"",
     "prepare": "lefthook install",
     "prose:sync": "bun run scripts/install-vale.ts && .tools/vale sync",
+    "schema": "ts-json-schema-generator --path src/config.ts --type Config --tsconfig tsconfig.json -o schema/config.schema.json && biome format --write schema/config.schema.json",
     "test": "bun test",
     "typecheck": "tsc --noEmit"
   },
@@ -66,6 +69,7 @@
     "prettier": "3.9.6",
     "semantic-release": "25.0.9",
     "sort-package-json": "4.0.0",
+    "ts-json-schema-generator": "2.9.0",
     "tsdown": "0.22.14",
     "typedoc": "0.28.20",
     "typescript": "5.9.3"

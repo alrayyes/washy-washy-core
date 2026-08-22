@@ -22,9 +22,13 @@ APIs in the public surface except `csv.ts` (see below).
   Bun-only adapter that wraps `parseMachine`). Adding `fs`/`Bun.file` calls
   here would break the browser entry point and the whole point of splitting
   this out.
-- **The published tarball ships only `dist/`, `README.md`, `LICENSE`** — see
-  `files` in `package.json`. `npm pack --dry-run` before a release if you've
-  touched that field or `tsdown.config.ts`.
+- **The published tarball ships only `dist/`, `schema/`, `README.md`,
+  `LICENSE`** — see `files` in `package.json`. `npm pack --dry-run` before a
+  release if you've touched that field or `tsdown.config.ts`.
+- **`schema/config.schema.json` is generated, never hand-edited.** `bun run
+schema` regenerates it from the `Config` type via
+  `ts-json-schema-generator`; `lint:schema` (part of `check`) fails on any
+  diff. Change `Config`'s shape, run the script, commit both.
 - **Two build targets, two entry points, on purpose.** `tsdown.config.ts`
   builds `index.ts` and `browser.ts` as separate outputs rather than one
   bundle with two `exports` pointing into it — that separation is what keeps

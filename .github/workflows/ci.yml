@@ -31,6 +31,7 @@ jobs:
       - run: bun run lint:md
       - run: bun run lint:yaml
       - run: bun run lint:package-json
+      - run: bun run lint:schema
       - run: bun run typecheck
       - run: bun test --coverage --coverage-reporter=lcov
       # Pinning a dependency stops it drifting; it says nothing about the

@@ -38,6 +38,9 @@ bun run prose:sync   # fetches Vale's style packages; needed once before `check`
 - `bun run docs` — build the [TypeDoc](https://typedoc.org) site into
   `docs-site/` (gitignored; deployed by `.github/workflows/docs.yml` on push
   to `main`, not part of `bun run check`)
+- `bun run schema` — regenerate `schema/config.schema.json` from the
+  `Config` type; `lint:schema` (part of `check`) fails if this would produce
+  a diff, so run it after touching `Config`'s shape and commit the result
 - `bun run lint:fix` — Biome, writing its own fixes
 - `bun run lint:prose:advice` — the full Vale read, including style advice
   the error-level `lint:prose` doesn't fail on
