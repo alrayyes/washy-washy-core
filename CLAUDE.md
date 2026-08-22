@@ -36,6 +36,14 @@ APIs in the public surface except `csv.ts` (see below).
   is doing its job. Prettier is scoped to Markdown/YAML on purpose — if
   `bun run format` ever touches a `.ts` file, `.prettierignore` broke, not
   Biome.
+- **`DEFAULT_MACHINE`/`DIST_MACHINE` (`data/machine.json`, `.dist`) didn't
+  come over from `washy-washy-cli`'s pre-split `packages/core`, on purpose.**
+  They're a filesystem path convention tied to one consumer's directory
+  layout, not chart/machine domain logic — and not even a convention every
+  consumer actually shares: `washy-washy-web` needed a different one for its
+  own test fixtures. If a future ticket asks to re-add them, that's a real
+  architecture question (this package doing file I/O/path conventions at
+  all), not a missing export to restore reflexively.
 - **The `release` job's first-ever run needs a human, twice.** Once for a
   one-time manual `npm publish --access public` from a local machine (npm's
   Trusted Publishing can't be linked before the scoped package exists at all
