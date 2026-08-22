@@ -31,3 +31,16 @@ APIs in the public surface except `csv.ts` (see below).
   `Buffer`/`csv-parse` out of the browser build. Verify with
   `grep -l Buffer dist/browser.mjs` (should find nothing) after touching the
   build config.
+- **A bare `prettier --write .` reformats the TypeScript too**, fighting
+  Biome's formatting and mangling every source file, unless `.prettierignore`
+  is doing its job. Prettier is scoped to Markdown/YAML on purpose — if
+  `bun run format` ever touches a `.ts` file, `.prettierignore` broke, not
+  Biome.
+- **The `release` job's first-ever run needs a human, twice.** Once for a
+  one-time manual `npm publish --access public` from a local machine (npm's
+  Trusted Publishing can't be linked before the scoped package exists at all
+  — there's no pre-registration path for a brand-new scope), and once more
+  to flip that first publish from restricted to public, since a scoped
+  package defaults to restricted regardless of `publishConfig.access` in
+  `package.json` when published outside CI. Every release after that is
+  unattended.
