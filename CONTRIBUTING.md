@@ -12,6 +12,11 @@ bun run prose:sync   # fetches Vale's style packages; needed once before `check`
 
 - The failing test comes first, then the least code that makes it pass, then
   the refactor.
+- **Unit tests only, deliberately.** Every exported function is pure —
+  strings and parsed values in, values or a thrown error out, no file I/O,
+  no network, no other layer that could fail independently. There's nothing
+  here an integration or end-to-end test would catch that a unit test
+  doesn't already, so `test/*.test.ts` is the whole suite.
 - One logical change per commit. Commits follow
   [Conventional Commits](https://www.conventionalcommits.org/), linted by
   commitlint on every commit and, again, on the pull request title (a squash
