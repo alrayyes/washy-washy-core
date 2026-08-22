@@ -40,6 +40,14 @@ export interface Instruction {
   colourGroup: ColourGroup;
   mixTags: MixTag[];
   notes: string;
+  /**
+   * Who to credit for a care instruction that isn't obvious from the garment
+   * itself — "the label says 40°" doesn't need one, "the manufacturer says
+   * wash these alone" might. Empty when there's nothing to cite.
+   */
+  referenceName: string;
+  /** A link backing up `referenceName`. Empty when there's nothing to cite. */
+  referenceLink: string;
 }
 
 /** An instruction plus the other piles it may share a drum with. */

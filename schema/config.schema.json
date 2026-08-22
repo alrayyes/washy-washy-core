@@ -75,6 +75,14 @@
         "program": {
           "type": "string"
         },
+        "referenceLink": {
+          "description": "A link backing up `referenceName`. Empty when there's nothing to cite.",
+          "type": "string"
+        },
+        "referenceName": {
+          "description": "Who to credit for a care instruction that isn't obvious from the garment itself — \"the label says 40°\" doesn't need one, \"the manufacturer says wash these alone\" might. Empty when there's nothing to cite.",
+          "type": "string"
+        },
         "spin": {
           "type": "string"
         },
@@ -97,7 +105,9 @@
         "drying",
         "colourGroup",
         "mixTags",
-        "notes"
+        "notes",
+        "referenceName",
+        "referenceLink"
       ],
       "type": "object"
     },
