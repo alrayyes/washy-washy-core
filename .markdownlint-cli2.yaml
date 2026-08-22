@@ -19,6 +19,9 @@ globs:
 
 ignores:
   - "**/node_modules/**"
+  # Vendored by `vale sync`. Generated text belongs to nobody.
+  - "styles/Google/**"
+  - "styles/proselint/**"
   # Written by semantic-release from the commit subjects, and committed by
   # the release job without passing through any hook.
   - "CHANGELOG.md"

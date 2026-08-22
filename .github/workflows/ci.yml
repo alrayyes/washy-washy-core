@@ -73,6 +73,48 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - uses: actions/dependency-review-action@a1d282b36b6f3519aa1f3fc636f609c47dddb294 # v5.0.0
 
+  # Prose gets its own two jobs rather than a line in `check`, so that when
+  # the run goes red the job name says which tier failed: a grammar error is
+  # a mistake and a style alert is an opinion, answered differently.
+
+  # Mechanics. LanguageTool's rule database — grammar, spelling, punctuation,
+  # the phonetic article — and mechanics have a right answer, so this blocks.
+  ltex:
+    runs-on: ubuntu-latest
+    env:
+      LTEX_VERSION: "18.7.0"
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Fetch ltex-cli-plus
+        run: |
+          curl -sSfL -o ltex.tar.gz \
+            "https://github.com/ltex-plus/ltex-ls-plus/releases/download/${LTEX_VERSION}/ltex-ls-plus-${LTEX_VERSION}-linux-x64.tar.gz"
+          tar xzf ltex.tar.gz
+          # The release carries its own Java 21, but the launcher is a
+          # Gradle start script and prefers JAVA_HOME — which a GitHub
+          # runner sets to its own Java 17. The class files are version 65
+          # and 17 reads up to 61, so it fails to load rather than falling
+          # back. Point JAVA_HOME at the runtime that shipped beside it.
+          echo "JAVA_HOME=$PWD/$(ls -d ltex-ls-plus-${LTEX_VERSION}/jdk-*)" >> "$GITHUB_ENV"
+      # It reports findings with exit code 3, not 1, so a step testing for
+      # a specific code would pass a failing document. Let the shell judge
+      # non-zero.
+      - run: ./ltex-ls-plus-${LTEX_VERSION}/bin/ltex-cli-plus --client-configuration=.ltex.json README.md CONTRIBUTING.md CLAUDE.md SECURITY.md
+
+  # Style. House voice, weasel words, wordiness, undefined jargon. Advice
+  # rather than a verdict: Vale exits non-zero only on error-severity
+  # alerts, so its warnings are reported without failing anything.
+  vale:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0
+        with:
+          bun-version: 1.4.0
+      - run: bun install --frozen-lockfile
+      - run: bun run prose:sync
+      - run: bun run lint:prose:advice
+
   # The commit-msg hook already reads every message, but a hook is skippable
   # and these messages are load-bearing: semantic-release reads the
   # Conventional Commits that landed to decide the next version.

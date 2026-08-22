@@ -1,7 +1,7 @@
 # @washy-washy/core
 
 [![check](https://github.com/alrayyes/washy-washy-core/actions/workflows/ci.yml/badge.svg)](https://github.com/alrayyes/washy-washy-core/actions/workflows/ci.yml)
-[![codecov](https://codecov.io/gh/alrayyes/washy-washy-core/graph/badge.svg)](https://codecov.io/gh/alrayyes/washy-washy-core)
+[![Codecov](https://codecov.io/gh/alrayyes/washy-washy-core/graph/badge.svg)](https://codecov.io/gh/alrayyes/washy-washy-core)
 [![license](https://img.shields.io/github/license/alrayyes/washy-washy-core)](LICENSE)
 
 Chart parsing, machine validation, and mixing rules for
@@ -32,7 +32,7 @@ npm install @washy-washy/core
 
 `@washy-washy/core`'s CSV parser depends on `csv-parse`, which reaches for
 Node's `Buffer` at import time even if nothing calls it — a bundler ships
-that reference into the client and it dies at runtime with
+that reference into the client, and it dies at runtime with
 `Buffer is not defined`. `@washy-washy/core/browser` excludes it: a browser
 consumer reads and writes charts as JSON instead (`chartFromJson`/
 `chartToJson`), which needs no such dependency.

@@ -25,6 +25,19 @@ pre-commit:
       glob: "*.{yml,yaml}"
       run: bunx --bun prettier --write {staged_files}
       stage_fixed: true
+    # Error level only. Vale's warnings are style advice, and advice that
+    # blocks a commit is how you teach someone to reach for --no-verify;
+    # `bun run lint:prose:advice` and the CI job are where the full read
+    # lives. LTeX is deliberately absent — a ~300 MB download with its own
+    # Java runtime is more than a commit should wait on, so it runs in CI
+    # and in the editor over LSP. CHANGELOG.md is excluded here as well as
+    # in `lint:prose`, because this job is handed the staged files by name
+    # and never sees that script's glob.
+    - name: vale
+      glob: "*.md"
+      exclude:
+        - CHANGELOG.md
+      run: .tools/vale --minAlertLevel=error {staged_files}
 
 commit-msg:
   jobs:
@@ -44,6 +57,8 @@ pre-push:
       run: bun run lint:yaml
     - name: package-json
       run: bun run lint:package-json
+    - name: vale
+      run: bun run lint:prose
     - name: typecheck
       run: bun run typecheck
     - name: test

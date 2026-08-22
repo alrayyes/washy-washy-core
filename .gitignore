@@ -21,3 +21,10 @@ logs
 .eslintcache
 .cache
 *.tsbuildinfo
+
+# downloaded by bun run prose:sync — the Vale binary, and the style packages
+# it lints against. styles/config is ours and stays committed, so the
+# package directories are ignored by name rather than the whole styles/ tree
+.tools
+styles/Google
+styles/proselint
