@@ -1,0 +1,50 @@
+# Same commands CI runs, so the hook and the gate cannot drift.
+pre-commit:
+  parallel: true
+  jobs:
+    - name: biome
+      glob: "*.{js,jsx,ts,tsx,json,jsonc}"
+      run: bunx --bun biome check --write --no-errors-on-unmatched --files-ignore-unknown=true {staged_files}
+      stage_fixed: true
+    - name: package-json
+      glob: "package.json"
+      run: bunx --bun sort-package-json {staged_files}
+      stage_fixed: true
+    - name: markdown
+      group:
+        piped: true
+        jobs:
+          - name: prettier
+            glob: "*.md"
+            run: bunx --bun prettier --write {staged_files}
+            stage_fixed: true
+          - name: markdownlint
+            glob: "*.md"
+            run: bunx --bun markdownlint-cli2 {staged_files}
+    - name: yaml
+      glob: "*.{yml,yaml}"
+      run: bunx --bun prettier --write {staged_files}
+      stage_fixed: true
+
+commit-msg:
+  jobs:
+    - name: commitlint
+      run: bunx --bun commitlint --edit {1}
+
+# Nothing here writes. A hook that rewrote files under a push would leave the
+# pushed commit and the working tree disagreeing about what was reviewed.
+pre-push:
+  parallel: true
+  jobs:
+    - name: biome
+      run: bun run lint
+    - name: markdownlint
+      run: bun run lint:md
+    - name: yaml
+      run: bun run lint:yaml
+    - name: package-json
+      run: bun run lint:package-json
+    - name: typecheck
+      run: bun run typecheck
+    - name: test
+      run: bun test

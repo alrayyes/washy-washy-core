@@ -1,0 +1,33 @@
+# Every dependency here is pinned to an exact version, which is the whole
+# reason this file earns its place: a pinned version cannot drift, so the
+# upgrade has to arrive as a pull request that runs the tests rather than as a
+# resolution nobody reviewed.
+version: 2
+
+updates:
+  - package-ecosystem: bun
+    directory: /
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 10
+    commit-message:
+      prefix: fix
+      prefix-development: chore
+      include: scope
+    groups:
+      linters:
+        dependency-type: development
+        patterns:
+          - "@biomejs/*"
+          - "@commitlint/*"
+          - prettier
+          - markdownlint-cli2
+          - lefthook
+
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    commit-message:
+      prefix: ci
+      include: scope
