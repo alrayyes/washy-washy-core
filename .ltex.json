@@ -3,12 +3,14 @@
   "dictionary": {
     "en-GB": [
       "Biome",
+      "Biome-linted",
       "Codecov",
       "Dependabot",
       "GitHub",
       "JSONC",
       "LanguageTool",
       "LTeX",
+      "Prettier-linted",
       "TSDoc",
       "TypeDoc",
       "WinAnsi",
@@ -25,6 +27,7 @@
       "npmjs",
       "postinstall",
       "proselint",
+      "serializer",
       "tsdown",
       "typecheck",
       "typechecks",
