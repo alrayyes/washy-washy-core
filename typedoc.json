@@ -1,0 +1,11 @@
+{
+  "$schema": "https://typedoc.org/schema.json",
+  "entryPoints": ["src/index.ts", "src/browser.ts"],
+  "out": "docs-site",
+  "name": "@washy-washy/core",
+  "readme": "README.md",
+  "excludePrivate": true,
+  "excludeInternal": true,
+  "githubPages": true,
+  "cleanOutputDir": true
+}

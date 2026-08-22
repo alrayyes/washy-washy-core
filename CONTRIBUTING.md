@@ -35,6 +35,9 @@ bun run prose:sync   # fetches Vale's style packages; needed once before `check`
 - `bun run check` — everything CI checks, in one command
 - `bun test test/csv.test.ts` — one file, when iterating
 - `bun run build` — emit `dist/` via [tsdown](https://tsdown.dev)
+- `bun run docs` — build the [TypeDoc](https://typedoc.org) site into
+  `docs-site/` (gitignored; deployed by `.github/workflows/docs.yml` on push
+  to `main`, not part of `bun run check`)
 - `bun run lint:fix` — Biome, writing its own fixes
 - `bun run lint:prose:advice` — the full Vale read, including style advice
   the error-level `lint:prose` doesn't fail on
