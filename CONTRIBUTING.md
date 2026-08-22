@@ -4,7 +4,8 @@
 
 ```sh
 bun install
-bun run prepare  # installs the git hooks (lefthook)
+bun run prepare      # installs the git hooks (lefthook)
+bun run prose:sync   # fetches Vale's style packages; needed once before `check` works
 ```
 
 ## Workflow
@@ -30,6 +31,10 @@ bun run prepare  # installs the git hooks (lefthook)
 - `bun test test/csv.test.ts` — one file, when iterating
 - `bun run build` — emit `dist/` via [tsdown](https://tsdown.dev)
 - `bun run lint:fix` — Biome, writing its own fixes
+- `bun run lint:prose:advice` — the full Vale read, including style advice
+  the error-level `lint:prose` doesn't fail on
+- Grammar/spelling (LTeX) only runs in CI and over LSP in the editor — see
+  `rules/markdown.md` in `dotfiles` for why it's not in a hook here
 
 ## Pull requests
 

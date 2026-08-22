@@ -32,14 +32,17 @@
   ],
   "scripts": {
     "build": "tsdown",
-    "check": "bun run lint && bun run lint:md && bun run lint:yaml && bun run lint:package-json && bun run typecheck && bun test",
+    "check": "bun run lint && bun run lint:md && bun run lint:yaml && bun run lint:package-json && bun run lint:prose && bun run typecheck && bun test",
     "format": "prettier --write .",
     "lint": "biome check .",
     "lint:fix": "biome check --write .",
     "lint:md": "prettier --check \"**/*.md\" && markdownlint-cli2 \"**/*.md\"",
     "lint:package-json": "sort-package-json --check",
+    "lint:prose": ".tools/vale --glob='!{styles/**,CHANGELOG.md}' --minAlertLevel=error .",
+    "lint:prose:advice": ".tools/vale --glob='!{styles/**,CHANGELOG.md}' .",
     "lint:yaml": "prettier --check \"**/*.{yml,yaml}\"",
     "prepare": "lefthook install",
+    "prose:sync": "bun run scripts/install-vale.ts && .tools/vale sync",
     "test": "bun test",
     "typecheck": "tsc --noEmit"
   },

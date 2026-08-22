@@ -1,0 +1,27 @@
+# One regex per line. Casing here is the casing Vale.Terms holds the docs to.
+Biome
+Bun
+CLI
+Codecov
+Dependabot
+GitHub
+JavaScript
+LTeX
+LanguageTool
+Markdown
+Prettier
+TSDoc
+TypeScript
+Vale
+[Cc]ommitlint
+[Ll]efthook
+[Mm]arkdownlint
+[Ss]emantic-release
+[Tt]ypecheck
+[Ww]ashy[ -]washy
+bunx
+markdownlint-cli2
+npm
+npmjs
+proselint
+tsdown
