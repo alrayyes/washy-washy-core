@@ -6,7 +6,7 @@ anywhere.
 
 If you find something that matters — a crafted input that causes something
 worse than a thrown error, a supply chain concern in how this package is
-built or published — report it privately using
+built or published — report it privately via
 [GitHub's private vulnerability reporting](https://github.com/alrayyes/washy-washy-core/security/advisories/new)
 rather than in a public issue.
 
