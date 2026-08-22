@@ -78,6 +78,12 @@ function parseIronSetting(value: unknown, index: number): IronSetting {
  * Checks a parsed machine file and hands back something the renderer can use.
  * Every failure names the field, because the fix is always an edit to that
  * line of JSON.
+ *
+ * @example
+ * ```ts
+ * const machine = parseMachine(JSON.parse(machineFileContents));
+ * machine.washer.programs; // ["Off", "Cottons", "Wool", ...]
+ * ```
  */
 export function parseMachine(value: unknown): Machine {
   if (typeof value !== "object" || value === null) fail("the file must contain an object");
@@ -115,6 +121,13 @@ export function parseMachine(value: unknown): Machine {
   };
 }
 
+/**
+ * @example
+ * ```ts
+ * ironSetting(machine, "2")?.label; // "••"
+ * ironSetting(machine, "nope"); // undefined
+ * ```
+ */
 export function ironSetting(machine: Machine, key: string): IronSetting | undefined {
   return machine.iron.settings.find((setting) => setting.key === key);
 }
@@ -124,6 +137,11 @@ export function ironSetting(machine: Machine, key: string): IronSetting | undefi
  *
  * There is no key for "do not iron". That is the `ironing` column's job, and
  * two places to say the same thing is two places to disagree.
+ *
+ * @example
+ * ```ts
+ * ironSettingKeys(machine); // ["min", "1", "2", "3"]
+ * ```
  */
 export function ironSettingKeys(machine: Machine): string[] {
   return machine.iron.settings.map((setting) => setting.key);
@@ -133,6 +151,12 @@ export function ironSettingKeys(machine: Machine): string[] {
  * `40` becomes `40°`; `cold` stays `cold`. The machine file is free to use
  * whatever word its display shows for the cold wash, so the degree sign is
  * decided by whether the value is a number rather than by a list of exceptions.
+ *
+ * @example
+ * ```ts
+ * formatTemperature("40"); // "40°"
+ * formatTemperature("cold"); // "cold"
+ * ```
  */
 export function formatTemperature(value: string): string {
   return /^\d+$/.test(value) ? `${value}°` : value;

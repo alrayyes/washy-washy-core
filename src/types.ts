@@ -53,6 +53,12 @@ export interface ResolvedInstruction extends Instruction {
  * Usually one figure. Piles sharing a load agree on every setting, so they
  * ought to agree on this too — but the chart is data somebody types, and
  * printing both is more honest than picking the first one and hoping.
+ *
+ * @example
+ * ```ts
+ * durationsOf([pile, pile]); // "~2:00"
+ * durationsOf([pile, { ...pile, duration: "~1:10" }]); // "~2:00 / ~1:10"
+ * ```
  */
 export function durationsOf(group: Instruction[]): string {
   return [...new Set(group.map((item) => item.duration).filter((value) => value !== ""))].join(

@@ -4,6 +4,7 @@
 [![npm](https://img.shields.io/npm/v/%40washy-washy%2Fcore)](https://www.npmjs.com/package/@washy-washy/core)
 [![Codecov](https://codecov.io/gh/alrayyes/washy-washy-core/graph/badge.svg)](https://codecov.io/gh/alrayyes/washy-washy-core)
 [![license](https://img.shields.io/github/license/alrayyes/washy-washy-core)](LICENSE)
+[![docs](https://img.shields.io/badge/docs-typedoc-blue)](https://alrayyes.github.io/washy-washy-core/)
 
 Chart parsing, machine validation, and mixing rules for
 [washy-washy](https://github.com/alrayyes/washy-washy-cli), a laundry chart
@@ -76,8 +77,9 @@ const instructions = chartFromJson(jsonFromStorage, machine);
   way a printed chart is laid out: one card per identical setup, a wash-only
   cut, an iron-only cut ordered by thermostat position.
 
-Every exported function and type carries a TSDoc comment — the full API
-reference is your editor's hover, not a separate generated site.
+Every exported function and type carries a TSDoc comment with a runnable
+example — that's your editor's hover, and it's also the generated
+[API reference](https://alrayyes.github.io/washy-washy-core/).
 
 ## Development
 

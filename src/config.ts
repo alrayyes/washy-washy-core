@@ -17,6 +17,13 @@ export interface Config {
  * machine it's embedded with — never a different one. Every failure names
  * which half is wrong, same as `parseMachine` and `instructionsFromRows` do
  * on their own.
+ *
+ * @example
+ * ```ts
+ * const config = parseConfig(JSON.parse(configFileContents));
+ * config.machine.washer.name; // "Generic front loader"
+ * config.chart[0].clothingType; // "Dark"
+ * ```
  */
 export function parseConfig(value: unknown): Config {
   if (typeof value !== "object" || value === null) {
@@ -35,13 +42,27 @@ export function parseConfig(value: unknown): Config {
   return { machine, chart };
 }
 
-/** The reverse of `parseConfig` — what a JSON export writes out. */
+/**
+ * The reverse of `parseConfig` — what a JSON export writes out.
+ *
+ * @example
+ * ```ts
+ * const json = configToJson(config);
+ * ```
+ */
 export function configToJson(config: Config): string {
   const rows = { machine: config.machine, chart: rowsFromInstructions(config.chart) };
   return `${JSON.stringify(rows, null, 2)}\n`;
 }
 
-/** The other half of `configToJson`. Throws the same errors `parseConfig` does. */
+/**
+ * The other half of `configToJson`. Throws the same errors `parseConfig` does.
+ *
+ * @example
+ * ```ts
+ * const config = configFromJson(configFileContents);
+ * ```
+ */
 export function configFromJson(source: string): Config {
   let value: unknown;
   try {
