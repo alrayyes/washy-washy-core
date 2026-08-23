@@ -1,5 +1,8 @@
 # Contributing
 
+See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for the file layout, how a
+chart and machine flow through the modules, and the naming conventions.
+
 ## Setup
 
 ```sh
