@@ -1,6 +1,7 @@
 {
   "$schema": "https://typedoc.org/schema.json",
-  "entryPoints": ["src/index.ts", "src/browser.ts"],
+  "entryPoints": ["src/browser.ts", "src/index.ts"],
+  "sortEntryPoints": false,
   "out": "docs-site",
   "name": "@washy-washy/core",
   "readme": "README.md",
