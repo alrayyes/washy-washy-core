@@ -1,3 +1,9 @@
+## [1.3.1](https://github.com/alrayyes/washy-washy-core/compare/v1.3.0...v1.3.1) (2026-08-23)
+
+### Bug Fixes
+
+* validate the duration field's shape in instructionsFromRows ([#28](https://github.com/alrayyes/washy-washy-core/issues/28)) ([47ce9c9](https://github.com/alrayyes/washy-washy-core/commit/47ce9c9607c7c4148a0ceb775a8adfad79df1275))
+
 ## [1.3.0](https://github.com/alrayyes/washy-washy-core/compare/v1.2.0...v1.3.0) (2026-08-22)
 
 ### Features
