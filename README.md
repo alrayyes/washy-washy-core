@@ -12,6 +12,10 @@ generator. This package holds no rendering or file I/O — just the pure logic
 a CSV/JSON chart is checked and reasoned about with, shared by the CLI, the
 web app, and [`@washy-washy/pdf`](https://github.com/alrayyes/washy-washy-pdf).
 
+**Jump to:** [Browser](#browser) · [Node and Bun (CSV)](#node-and-bun-csv) ·
+[What's in it](#whats-in-it) · [Development](#development) ·
+[API reference](https://alrayyes.github.io/washy-washy-core/)
+
 ## Requirements
 
 - Node.js 18+, Bun, or any other runtime with modern ESM/`exports` map
@@ -29,8 +33,8 @@ npm install @washy-washy/core
 
 | Import                      | Use when                          | Includes                          |
 | --------------------------- | --------------------------------- | --------------------------------- |
-| `@washy-washy/core`         | Node/Bun, reading a CSV from disk | Everything, including CSV parsing |
 | `@washy-washy/core/browser` | Bundled for a browser             | Everything except CSV parsing     |
+| `@washy-washy/core`         | Node/Bun, reading a CSV from disk | Everything, including CSV parsing |
 
 `@washy-washy/core`'s CSV parser depends on `csv-parse`, which reaches for
 Node's `Buffer` at import time even if nothing calls it — a bundler ships
@@ -41,15 +45,12 @@ consumer reads and writes charts as JSON instead (`chartFromJson`/
 
 ## Usage
 
-```ts
-import { parseInstructions, parseMachine } from "@washy-washy/core";
+### Browser
 
-const machine = parseMachine(JSON.parse(machineFileContents));
-const instructions = parseInstructions(csvFileContents, machine);
-```
+Read and write a chart as JSON instead of CSV — `@washy-washy/core/browser`
+has no CSV parser (see [Two entry points](#two-entry-points)).
 
 ```ts
-// In a browser bundle: read/write a chart as JSON instead of CSV.
 import {
   chartFromJson,
   chartToJson,
@@ -58,6 +59,15 @@ import {
 
 const machine = parseMachine(machineConfig);
 const instructions = chartFromJson(jsonFromStorage, machine);
+```
+
+### Node and Bun (CSV)
+
+```ts
+import { parseInstructions, parseMachine } from "@washy-washy/core";
+
+const machine = parseMachine(JSON.parse(machineFileContents));
+const instructions = parseInstructions(csvFileContents, machine);
 ```
 
 ### What's in it
