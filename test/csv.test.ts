@@ -99,6 +99,17 @@ describe("parseInstructions", () => {
     );
   });
 
+  test("rejects a duration that doesn't match H:MM", () => {
+    expect(() => parseInstructions(csv(ROW.replace("~2:00", "banana")), machine)).toThrow(
+      /column "duration": must match H:MM, found "banana"/,
+    );
+  });
+
+  test("leaves the duration empty when a row doesn't give one", () => {
+    const [item] = parseInstructions(csv(ROW.replace("~2:00", "")), machine);
+    expect(item?.duration).toBe("");
+  });
+
   test("reads an optional reference name and link", () => {
     const row = ROW.replace(
       /,,,$/,
