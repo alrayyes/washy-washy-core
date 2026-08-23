@@ -103,7 +103,8 @@ bun run check    # lint, typecheck, test
 bun run build    # emit dist/ (tsdown)
 ```
 
-See [CONTRIBUTING.md](CONTRIBUTING.md).
+See [CONTRIBUTING.md](CONTRIBUTING.md) and, for how the modules fit together,
+[docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
 
 ## License
 
