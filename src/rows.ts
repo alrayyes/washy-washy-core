@@ -59,6 +59,17 @@ function boolean(row: number, column: string, value: string): boolean {
   throw new RowError(row, column, `"${value}" is not a yes/no value`);
 }
 
+const DURATION_PATTERN = /^~?\d+:[0-5]\d$/;
+
+/** Empty stays empty — some piles genuinely have no duration on record. */
+function duration(row: number, column: string, value: string): string {
+  if (value === "") return value;
+  if (!DURATION_PATTERN.test(value)) {
+    throw new RowError(row, column, `must match H:MM, found "${value}"`);
+  }
+  return value;
+}
+
 /**
  * Checks rows shaped like the chart's schema — the same shape a CSV parses
  * into, or a JSON file round-tripped through `rowsFromInstructions` — against
@@ -125,7 +136,7 @@ export function instructionsFromRows(
       fabricSoftener: boolean(row, "fabric_softener", record.fabric_softener ?? ""),
       temperature: oneOf(row, "temperature", record.temperature ?? "", washer.temperatures),
       spin: oneOf(row, "spin", record.spin ?? "", washer.spins),
-      duration: record.duration ?? "",
+      duration: duration(row, "duration", record.duration ?? ""),
       program: oneOf(row, "program", record.program ?? "", washer.programs),
       options,
       ironing,

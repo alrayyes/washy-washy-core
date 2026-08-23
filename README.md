@@ -71,7 +71,9 @@ const instructions = chartFromJson(jsonFromStorage, machine);
   typed `Machine`. Every failure names the field that's wrong.
 - **`parseInstructions`** (CSV) and **`chartFromJson`**/**`chartToJson`**
   (JSON) parse a chart against a `Machine`, rejecting any row that asks for a
-  setting the machine doesn't have.
+  setting the machine doesn't have. `duration` is checked too, against
+  `~H:MM` (the `~` is optional) — empty is still fine, for a pile with no
+  duration on record.
 - **`parseConfig`**/**`configFromJson`**/**`configToJson`** do the same for a
   machine and a chart together, as one `{ machine, chart }` object — the
   chart is always validated against the machine it's embedded with.
