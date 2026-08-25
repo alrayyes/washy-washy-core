@@ -13,7 +13,7 @@
 export interface Washer {
   /** @maxLength 60 */
   name: string;
-  /** @maxLength 20 */
+  /** @maxLength 30 */
   capacity: string;
   /** Dial labels in physical order from twelve o'clock, clockwise. Index is the angle. */
   programs: string[];
@@ -133,9 +133,9 @@ export function parseMachine(value: unknown): Machine {
   return {
     washer: {
       name: text(washerRaw.name, "washer.name", 60),
-      capacity: text(washerRaw.capacity, "washer.capacity", 20, ""),
+      capacity: text(washerRaw.capacity, "washer.capacity", 30, ""),
       programs: stringList(washerRaw.programs, "washer.programs", 2, 32),
-      temperatures: stringList(washerRaw.temperatures, "washer.temperatures", 1, 12),
+      temperatures: stringList(washerRaw.temperatures, "washer.temperatures", 1, 15),
       spins: stringList(washerRaw.spins, "washer.spins", 1, 10),
       options: stringList(washerRaw.options ?? [], "washer.options", 0, 20),
     },

@@ -155,10 +155,10 @@ export function instructionsFromRows(
       ironing,
       ironingNotes: maxLength(row, "ironing_notes", record.ironing_notes ?? "", 400),
       ironSetting,
-      drying: maxLength(row, "drying", record.drying ?? "", 150),
+      drying: maxLength(row, "drying", record.drying ?? "", 230),
       colourGroup: oneOf<ColourGroup>(row, "colour_group", record.colour_group ?? "", colourGroups),
       mixTags: tags,
-      notes: maxLength(row, "notes", record.notes ?? "", 500),
+      notes: maxLength(row, "notes", record.notes ?? "", 570),
       referenceName: maxLength(row, "reference_name", record.reference_name ?? "", 80),
       referenceLink: maxLength(row, "reference_link", record.reference_link ?? "", 2048),
     };
