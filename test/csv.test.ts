@@ -191,8 +191,12 @@ describe("parseInstructions", () => {
       ["clothing_type", 60],
       ["detergent", 200],
       ["ironing_notes", 400],
-      ["drying", 150],
-      ["notes", 500],
+      // Raised from the original 150/500: real bundled locale content
+      // (washy-washy-web's German translations) needed up to 224/559 chars,
+      // and washy-washy-pdf 2.3.7 confirmed by rendering probe PDFs that
+      // free-flowing prose has headroom well past that.
+      ["drying", 230],
+      ["notes", 570],
       ["reference_name", 80],
       ["reference_link", 2048],
     ] as const)("rejects %s past its %i-character limit", (column, max) => {
@@ -209,8 +213,8 @@ describe("parseInstructions", () => {
     });
 
     test("accepts a value right at the limit", () => {
-      const [item] = parseInstructions(csvWith({ notes: "x".repeat(500) }), machine);
-      expect(item?.notes).toHaveLength(500);
+      const [item] = parseInstructions(csvWith({ notes: "x".repeat(570) }), machine);
+      expect(item?.notes).toHaveLength(570);
     });
   });
 

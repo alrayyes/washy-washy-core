@@ -77,6 +77,25 @@ describe("parseMachine", () => {
     expect(() => parseMachine(tooLong)).toThrow(/washer\.programs/);
   });
 
+  // Raised from the original 20/12: washy-washy-web's bundled locale
+  // content needed up to 28/14 chars, and washy-washy-pdf 2.3.7 confirmed
+  // by rendering probe PDFs that both slots have room past that — capacity
+  // renders on the full-width masthead line, and a real bug in the
+  // reference sheet's °C column (washy-washy-pdf#61) was fixed to make
+  // room for temperatures.
+  test("rejects a washer capacity too long for the masthead line", () => {
+    const tooLong = { ...MINIMAL, washer: { ...MINIMAL.washer, capacity: "x".repeat(31) } };
+    expect(() => parseMachine(tooLong)).toThrow(/washer\.capacity.*31/);
+  });
+
+  test("rejects a temperature entry too long for the reference sheet's °C column", () => {
+    const tooLong = {
+      ...MINIMAL,
+      washer: { ...MINIMAL.washer, temperatures: [...MINIMAL.washer.temperatures, "x".repeat(16)] },
+    };
+    expect(() => parseMachine(tooLong)).toThrow(/washer\.temperatures/);
+  });
+
   test("rejects a thermostat label too long for the tightest slot in the renderer", () => {
     const tooLong = {
       ...MINIMAL,

@@ -40,11 +40,11 @@ export interface Instruction {
   ironingNotes: string;
   /** Thermostat position. Empty when `ironing` is false. */
   ironSetting: string;
-  /** @maxLength 150 */
+  /** @maxLength 230 */
   drying: string;
   colourGroup: ColourGroup;
   mixTags: MixTag[];
-  /** @maxLength 500 */
+  /** @maxLength 570 */
   notes: string;
   /**
    * Who to credit for a care instruction that isn't obvious from the garment
