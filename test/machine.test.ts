@@ -59,6 +59,45 @@ describe("parseMachine", () => {
     };
     expect(parseMachine(named).iron.settings.map((setting) => setting.key)).toContain("none");
   });
+
+  // Caps chosen from @washy-washy/pdf's actual fixed-width slots (dial
+  // captions, the reference-sheet's thermostat column, chip rows) — long
+  // enough for anything a real fascia prints, short enough that a card or
+  // sheet never has to guess how to fit one.
+  test("rejects a washer or iron name too long for its label", () => {
+    const tooLong = { ...MINIMAL, washer: { ...MINIMAL.washer, name: "x".repeat(61) } };
+    expect(() => parseMachine(tooLong)).toThrow(/washer\.name.*61/);
+  });
+
+  test("rejects a dial entry too long to fit its slot", () => {
+    const tooLong = {
+      ...MINIMAL,
+      washer: { ...MINIMAL.washer, programs: [...MINIMAL.washer.programs, "x".repeat(33)] },
+    };
+    expect(() => parseMachine(tooLong)).toThrow(/washer\.programs/);
+  });
+
+  test("rejects a thermostat label too long for the tightest slot in the renderer", () => {
+    const tooLong = {
+      ...MINIMAL,
+      iron: {
+        ...MINIMAL.iron,
+        settings: [...MINIMAL.iron.settings, { key: "3", dots: "•••", label: "x".repeat(21) }],
+      },
+    };
+    expect(() => parseMachine(tooLong)).toThrow(/iron\.settings\[3\]\.label/);
+  });
+
+  test("rejects a dot string longer than the dial convention uses", () => {
+    const tooLong = {
+      ...MINIMAL,
+      iron: {
+        ...MINIMAL.iron,
+        settings: [...MINIMAL.iron.settings, { key: "3", dots: "••••••", label: "x" }],
+      },
+    };
+    expect(() => parseMachine(tooLong)).toThrow(/iron\.settings\[3\]\.dots/);
+  });
 });
 
 describe("ironSetting", () => {

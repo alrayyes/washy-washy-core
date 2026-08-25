@@ -11,7 +11,9 @@
  */
 
 export interface Washer {
+  /** @maxLength 60 */
   name: string;
+  /** @maxLength 20 */
   capacity: string;
   /** Dial labels in physical order from twelve o'clock, clockwise. Index is the angle. */
   programs: string[];
@@ -21,14 +23,19 @@ export interface Washer {
 }
 
 export interface IronSetting {
+  /** @maxLength 30 */
   key: string;
+  /** @maxLength 5 */
   dots: string;
+  /** @maxLength 20 */
   label: string;
+  /** @maxLength 60 */
   detail: string;
   steam: boolean;
 }
 
 export interface Iron {
+  /** @maxLength 60 */
   name: string;
   /** Thermostat positions in order, coolest first. */
   settings: IronSetting[];
@@ -43,7 +50,7 @@ function fail(what: string): never {
   throw new Error(`machine: ${what}`);
 }
 
-function stringList(value: unknown, field: string, minimum: number): string[] {
+function stringList(value: unknown, field: string, minimum: number, maxLength: number): string[] {
   if (!Array.isArray(value) || value.some((entry) => typeof entry !== "string" || entry === "")) {
     fail(`${field} must be a list of non-empty strings`);
   }
@@ -51,25 +58,43 @@ function stringList(value: unknown, field: string, minimum: number): string[] {
   if (list.length < minimum)
     fail(`${field} needs at least ${minimum} entries, found ${list.length}`);
   if (new Set(list).size !== list.length) fail(`${field} repeats a value`);
+  const overlong = list.find((entry) => entry.length > maxLength);
+  if (overlong !== undefined) {
+    fail(`${field} entries must be at most ${maxLength} characters, found "${overlong}"`);
+  }
   return list;
 }
 
-function text(value: unknown, field: string, fallback?: string): string {
-  if (typeof value === "string" && value !== "") return value;
-  if (fallback !== undefined) return fallback;
-  return fail(`${field} must be a non-empty string`);
+function text(value: unknown, field: string, maxLength: number, fallback?: string): string {
+  const resolved =
+    typeof value === "string" && value !== ""
+      ? value
+      : fallback !== undefined
+        ? fallback
+        : fail(`${field} must be a non-empty string`);
+  if (resolved.length > maxLength) {
+    fail(`${field} must be at most ${maxLength} characters, found ${resolved.length}`);
+  }
+  return resolved;
 }
+
+/** How many dots a thermostat position's dial label draws — never more than a handful. */
+const MAX_DOTS_LENGTH = 5;
 
 function parseIronSetting(value: unknown, index: number): IronSetting {
   if (typeof value !== "object" || value === null)
     fail(`iron.settings[${index}] must be an object`);
   const raw = value as Record<string, unknown>;
-  const key = text(raw.key, `iron.settings[${index}].key`);
+  const key = text(raw.key, `iron.settings[${index}].key`, 30);
+  const dots = typeof raw.dots === "string" ? raw.dots : "";
+  if (dots.length > MAX_DOTS_LENGTH) {
+    fail(`iron.settings[${index}].dots must be at most ${MAX_DOTS_LENGTH} characters`);
+  }
   return {
     key,
-    dots: typeof raw.dots === "string" ? raw.dots : "",
-    label: text(raw.label, `iron.settings[${index}].label`),
-    detail: text(raw.detail, `iron.settings[${index}].detail`, ""),
+    dots,
+    label: text(raw.label, `iron.settings[${index}].label`, 20),
+    detail: text(raw.detail, `iron.settings[${index}].detail`, 60, ""),
     steam: raw.steam === true,
   };
 }
@@ -107,15 +132,15 @@ export function parseMachine(value: unknown): Machine {
 
   return {
     washer: {
-      name: text(washerRaw.name, "washer.name"),
-      capacity: text(washerRaw.capacity, "washer.capacity", ""),
-      programs: stringList(washerRaw.programs, "washer.programs", 2),
-      temperatures: stringList(washerRaw.temperatures, "washer.temperatures", 1),
-      spins: stringList(washerRaw.spins, "washer.spins", 1),
-      options: stringList(washerRaw.options ?? [], "washer.options", 0),
+      name: text(washerRaw.name, "washer.name", 60),
+      capacity: text(washerRaw.capacity, "washer.capacity", 20, ""),
+      programs: stringList(washerRaw.programs, "washer.programs", 2, 32),
+      temperatures: stringList(washerRaw.temperatures, "washer.temperatures", 1, 12),
+      spins: stringList(washerRaw.spins, "washer.spins", 1, 10),
+      options: stringList(washerRaw.options ?? [], "washer.options", 0, 20),
     },
     iron: {
-      name: text(ironRaw.name, "iron.name"),
+      name: text(ironRaw.name, "iron.name", 60),
       settings: keys,
     },
   };

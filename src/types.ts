@@ -18,11 +18,14 @@ export type MixTag = (typeof mixTags)[number];
  * has to wonder whether a programme name exists.
  */
 export interface Instruction {
+  /** @maxLength 60 */
   clothingType: string;
+  /** @maxLength 200 */
   detergent: string;
   fabricSoftener: boolean;
   temperature: string;
   spin: string;
+  /** @maxLength 12 */
   duration: string;
   program: string;
   options: string[];
@@ -32,21 +35,28 @@ export interface Instruction {
    * How to iron it, or why you don't. Free prose and often empty, because most
    * of what there is to say about a pile nobody irons is already said by
    * `ironing` being false.
+   * @maxLength 400
    */
   ironingNotes: string;
   /** Thermostat position. Empty when `ironing` is false. */
   ironSetting: string;
+  /** @maxLength 150 */
   drying: string;
   colourGroup: ColourGroup;
   mixTags: MixTag[];
+  /** @maxLength 500 */
   notes: string;
   /**
    * Who to credit for a care instruction that isn't obvious from the garment
    * itself — "the label says 40°" doesn't need one, "the manufacturer says
    * wash these alone" might. Empty when there's nothing to cite.
+   * @maxLength 80
    */
   referenceName: string;
-  /** A link backing up `referenceName`. Empty when there's nothing to cite. */
+  /**
+   * A link backing up `referenceName`. Empty when there's nothing to cite.
+   * @maxLength 2048
+   */
   referenceLink: string;
 }
 

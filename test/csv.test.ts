@@ -1,5 +1,11 @@
 import { describe, expect, test } from "bun:test";
-import { chartFromJson, chartToJson, parseInstructions, parseMachine } from "../src/index";
+import {
+  chartFromJson,
+  chartToJson,
+  parseInstructions,
+  parseMachine,
+  type Row,
+} from "../src/index";
 
 // Covers every value the tests below exercise: valid and invalid programs,
 // temperatures, spins, options and an iron setting.
@@ -142,6 +148,70 @@ describe("parseInstructions", () => {
 
   test("rejects a header with no rows", () => {
     expect(() => parseInstructions(`${HEADER}\n`, machine)).toThrow(/no rows/);
+  });
+
+  /**
+   * Caps taken from @washy-washy/pdf's actual layout: fixed-width slots
+   * (clothingType) get a tight ceiling with headroom to spare, free-flowing
+   * prose (ironingNotes, notes, drying, reference fields) gets a generous
+   * one that's purely a bad-data backstop rather than a wrap-safety limit —
+   * these fields wrap fully regardless of length.
+   */
+  describe("free-text length limits", () => {
+    const BASE: Row = {
+      clothing_type: "Dark",
+      detergent: "Dark liquid",
+      fabric_softener: "no",
+      temperature: "30",
+      spin: "800",
+      duration: "~2:00",
+      program: "Cottons",
+      options: "Extra Rinse",
+      ironing: "yes",
+      ironing_notes: "Inside out",
+      iron_setting: "2",
+      drying: "Line dry",
+      colour_group: "dark",
+      mix_tags: "dye-bleeder",
+      notes: "",
+      reference_name: "",
+      reference_link: "",
+    };
+
+    function csvWith(overrides: Partial<typeof BASE>): string {
+      const values = { ...BASE, ...overrides };
+      return csv(
+        HEADER.split(",")
+          .map((column) => values[column as keyof typeof BASE])
+          .join(","),
+      );
+    }
+
+    test.each([
+      ["clothing_type", 60],
+      ["detergent", 200],
+      ["ironing_notes", 400],
+      ["drying", 150],
+      ["notes", 500],
+      ["reference_name", 80],
+      ["reference_link", 2048],
+    ] as const)("rejects %s past its %i-character limit", (column, max) => {
+      expect(() => parseInstructions(csvWith({ [column]: "x".repeat(max + 1) }), machine)).toThrow(
+        new RegExp(`column "${column}".*must be at most ${max} characters`),
+      );
+    });
+
+    test("rejects a duration too long even in valid H:MM shape", () => {
+      // 9 digits before the colon: same H:MM pattern, one character past the cap.
+      expect(() =>
+        parseInstructions(csvWith({ duration: `~${"9".repeat(9)}:59` }), machine),
+      ).toThrow(/column "duration".*must be at most 12 characters/);
+    });
+
+    test("accepts a value right at the limit", () => {
+      const [item] = parseInstructions(csvWith({ notes: "x".repeat(500) }), machine);
+      expect(item?.notes).toHaveLength(500);
+    });
   });
 
   /**

@@ -52,6 +52,19 @@ function oneOf<T extends string>(
   return value as T;
 }
 
+/**
+ * Caps free-text fields the PDFs render, so a value long enough to visibly
+ * crowd a card or reference-sheet row is rejected here rather than in a
+ * layout that only degrades quietly. Limits from @washy-washy/pdf's actual
+ * fixed-width slots and wrap-safety analysis, not a guess.
+ */
+function maxLength(row: number, column: string, value: string, max: number): string {
+  if (value.length > max) {
+    throw new RowError(row, column, `must be at most ${max} characters, found ${value.length}`);
+  }
+  return value;
+}
+
 function boolean(row: number, column: string, value: string): boolean {
   const normalised = value.trim().toLowerCase();
   if (["yes", "y", "true", "1"].includes(normalised)) return true;
@@ -67,7 +80,7 @@ function duration(row: number, column: string, value: string): string {
   if (!DURATION_PATTERN.test(value)) {
     throw new RowError(row, column, `must match H:MM, found "${value}"`);
   }
-  return value;
+  return maxLength(row, column, value, 12);
 }
 
 /**
@@ -103,7 +116,7 @@ export function instructionsFromRows(
     // which format the chart came from.
     const row = index + 2;
 
-    const clothingType = (record.clothing_type ?? "").trim();
+    const clothingType = maxLength(row, "clothing_type", (record.clothing_type ?? "").trim(), 60);
     if (clothingType === "") throw new RowError(row, "clothing_type", "must not be empty");
 
     const options = splitList(record.options ?? "").map((option) =>
@@ -132,7 +145,7 @@ export function instructionsFromRows(
 
     return {
       clothingType,
-      detergent: record.detergent ?? "",
+      detergent: maxLength(row, "detergent", record.detergent ?? "", 200),
       fabricSoftener: boolean(row, "fabric_softener", record.fabric_softener ?? ""),
       temperature: oneOf(row, "temperature", record.temperature ?? "", washer.temperatures),
       spin: oneOf(row, "spin", record.spin ?? "", washer.spins),
@@ -140,14 +153,14 @@ export function instructionsFromRows(
       program: oneOf(row, "program", record.program ?? "", washer.programs),
       options,
       ironing,
-      ironingNotes: record.ironing_notes ?? "",
+      ironingNotes: maxLength(row, "ironing_notes", record.ironing_notes ?? "", 400),
       ironSetting,
-      drying: record.drying ?? "",
+      drying: maxLength(row, "drying", record.drying ?? "", 150),
       colourGroup: oneOf<ColourGroup>(row, "colour_group", record.colour_group ?? "", colourGroups),
       mixTags: tags,
-      notes: record.notes ?? "",
-      referenceName: record.reference_name ?? "",
-      referenceLink: record.reference_link ?? "",
+      notes: maxLength(row, "notes", record.notes ?? "", 500),
+      referenceName: maxLength(row, "reference_name", record.reference_name ?? "", 80),
+      referenceLink: maxLength(row, "reference_link", record.reference_link ?? "", 2048),
     };
   });
 }
