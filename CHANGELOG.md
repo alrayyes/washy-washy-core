@@ -1,3 +1,9 @@
+## [1.4.0](https://github.com/alrayyes/washy-washy-core/compare/v1.3.1...v1.4.0) (2026-08-25)
+
+### Features
+
+* cap text-field lengths to avoid PDF rendering issues ([#33](https://github.com/alrayyes/washy-washy-core/issues/33)) ([5eac643](https://github.com/alrayyes/washy-washy-core/commit/5eac6435708b3e4995375bc717a13022e140ff23)), closes [#32](https://github.com/alrayyes/washy-washy-core/issues/32)
+
 ## [1.3.1](https://github.com/alrayyes/washy-washy-core/compare/v1.3.0...v1.3.1) (2026-08-23)
 
 ### Bug Fixes
