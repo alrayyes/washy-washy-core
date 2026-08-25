@@ -1,3 +1,9 @@
+## [1.4.1](https://github.com/alrayyes/washy-washy-core/compare/v1.4.0...v1.4.1) (2026-08-25)
+
+### Bug Fixes
+
+* widen four text-length caps that real content exceeds ([#36](https://github.com/alrayyes/washy-washy-core/issues/36)) ([3cdcd5a](https://github.com/alrayyes/washy-washy-core/commit/3cdcd5af0e724b0516e74739264d6a07c999904f)), closes [#35](https://github.com/alrayyes/washy-washy-core/issues/35)
+
 ## [1.4.0](https://github.com/alrayyes/washy-washy-core/compare/v1.3.1...v1.4.0) (2026-08-25)
 
 ### Features
