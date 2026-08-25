@@ -87,6 +87,17 @@ describe("parseMachine", () => {
     };
     expect(() => parseMachine(tooLong)).toThrow(/iron\.settings\[3\]\.label/);
   });
+
+  test("rejects a dot string longer than the dial convention uses", () => {
+    const tooLong = {
+      ...MINIMAL,
+      iron: {
+        ...MINIMAL.iron,
+        settings: [...MINIMAL.iron.settings, { key: "3", dots: "••••••", label: "x" }],
+      },
+    };
+    expect(() => parseMachine(tooLong)).toThrow(/iron\.settings\[3\]\.dots/);
+  });
 });
 
 describe("ironSetting", () => {
