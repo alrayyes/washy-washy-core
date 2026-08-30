@@ -1,7 +1,14 @@
 {
   "$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
   "files": {
-    "includes": ["**", "!**/node_modules", "!**/dist", "!styles/Google", "!styles/proselint"]
+    "includes": [
+      "**",
+      "!**/node_modules",
+      "!**/dist",
+      "!**/docs-site",
+      "!styles/Google",
+      "!styles/proselint"
+    ]
   },
   "formatter": {
     "enabled": true,
