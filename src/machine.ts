@@ -81,6 +81,28 @@ function text(value: unknown, field: string, maxLength: number, fallback?: strin
 /** How many dots a thermostat position's dial label draws — never more than a handful. */
 const MAX_DOTS_LENGTH = 5;
 
+// Per-entry caps for the washer's four dial lists, from @washy-washy/pdf's
+// actual fixed-width slots (dial captions, the reference sheet's columns) —
+// long enough for anything a real fascia prints, short enough that a card or
+// sheet never has to guess how to fit one. Consumers wiring up client-side
+// validation (a form's maxLength, say) should import these rather than
+// hardcoding the numbers a second time.
+
+/** Longest a single washer.programs dial caption can be. */
+export const MAX_WASHER_PROGRAM_LENGTH = 32;
+
+/**
+ * Longest a single washer.temperatures entry can be — the reference sheet's
+ * °C column. Raised from 12 once washy-washy-pdf#61 made room (see #36).
+ */
+export const MAX_WASHER_TEMPERATURE_LENGTH = 15;
+
+/** Longest a single washer.spins entry can be. */
+export const MAX_WASHER_SPIN_LENGTH = 10;
+
+/** Longest a single washer.options chip can be. */
+export const MAX_WASHER_OPTION_LENGTH = 20;
+
 function parseIronSetting(value: unknown, index: number): IronSetting {
   if (typeof value !== "object" || value === null)
     fail(`iron.settings[${index}] must be an object`);
@@ -134,10 +156,15 @@ export function parseMachine(value: unknown): Machine {
     washer: {
       name: text(washerRaw.name, "washer.name", 60),
       capacity: text(washerRaw.capacity, "washer.capacity", 30, ""),
-      programs: stringList(washerRaw.programs, "washer.programs", 2, 32),
-      temperatures: stringList(washerRaw.temperatures, "washer.temperatures", 1, 15),
-      spins: stringList(washerRaw.spins, "washer.spins", 1, 10),
-      options: stringList(washerRaw.options ?? [], "washer.options", 0, 20),
+      programs: stringList(washerRaw.programs, "washer.programs", 2, MAX_WASHER_PROGRAM_LENGTH),
+      temperatures: stringList(
+        washerRaw.temperatures,
+        "washer.temperatures",
+        1,
+        MAX_WASHER_TEMPERATURE_LENGTH,
+      ),
+      spins: stringList(washerRaw.spins, "washer.spins", 1, MAX_WASHER_SPIN_LENGTH),
+      options: stringList(washerRaw.options ?? [], "washer.options", 0, MAX_WASHER_OPTION_LENGTH),
     },
     iron: {
       name: text(ironRaw.name, "iron.name", 60),
