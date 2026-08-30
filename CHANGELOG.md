@@ -1,3 +1,13 @@
+## [1.5.0](https://github.com/alrayyes/washy-washy-core/compare/v1.4.1...v1.5.0) (2026-08-30)
+
+### Features
+
+* export washer array-field length caps as named constants ([#39](https://github.com/alrayyes/washy-washy-core/issues/39)) ([0fa1a50](https://github.com/alrayyes/washy-washy-core/commit/0fa1a502a822e49517773b9ab24c766cd58077ac)), closes [#34](https://github.com/alrayyes/washy-washy-core/issues/34)
+
+### Bug Fixes
+
+* **tooling:** exclude docs-site from biome check ([#38](https://github.com/alrayyes/washy-washy-core/issues/38)) ([a7d3561](https://github.com/alrayyes/washy-washy-core/commit/a7d35611d94d96636f90491c174b044833642895)), closes [#31](https://github.com/alrayyes/washy-washy-core/issues/31)
+
 ## [1.4.1](https://github.com/alrayyes/washy-washy-core/compare/v1.4.0...v1.4.1) (2026-08-25)
 
 ### Bug Fixes
