@@ -86,25 +86,22 @@ jobs:
   ltex:
     runs-on: ubuntu-latest
     timeout-minutes: 10
-    env:
-      LTEX_VERSION: "18.7.0"
+    # Built once by alrayyes/ltex-cli-plus, not fetched fresh here, so
+    # ltex-cli-plus is already on PATH.
+    container:
+      image: ghcr.io/alrayyes/ltex-cli-plus@sha256:30853781c1b568518826e3191a90db95b5edf5dfbdc5b64e538cb35751156c42 # 18.7.0
     steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-      - name: Fetch ltex-cli-plus
+      - name: Install git
+        # The image is built for the CLI, not for checkout; git is the only
+        # thing actions/checkout needs that it doesn't already carry.
         run: |
-          curl -sSfL -o ltex.tar.gz \
-            "https://github.com/ltex-plus/ltex-ls-plus/releases/download/${LTEX_VERSION}/ltex-ls-plus-${LTEX_VERSION}-linux-x64.tar.gz"
-          tar xzf ltex.tar.gz
-          # The release carries its own Java 21, but the launcher is a
-          # Gradle start script and prefers JAVA_HOME — which a GitHub
-          # runner sets to its own Java 17. The class files are version 65
-          # and 17 reads up to 61, so it fails to load rather than falling
-          # back. Point JAVA_HOME at the runtime that shipped beside it.
-          echo "JAVA_HOME=$PWD/$(ls -d ltex-ls-plus-${LTEX_VERSION}/jdk-*)" >> "$GITHUB_ENV"
+          apt-get update
+          apt-get install -y --no-install-recommends git
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       # It reports findings with exit code 3, not 1, so a step testing for
       # a specific code would pass a failing document. Let the shell judge
       # non-zero.
-      - run: ./ltex-ls-plus-${LTEX_VERSION}/bin/ltex-cli-plus --client-configuration=.ltex.json README.md CONTRIBUTING.md CLAUDE.md SECURITY.md
+      - run: ltex-cli-plus --client-configuration=.ltex.json README.md CONTRIBUTING.md CLAUDE.md SECURITY.md
 
   # Style. House voice, weasel words, wordiness, undefined jargon. Advice
   # rather than a verdict: Vale exits non-zero only on error-severity
