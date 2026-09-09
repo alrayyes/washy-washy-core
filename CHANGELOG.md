@@ -1,3 +1,9 @@
+## [1.5.2](https://github.com/alrayyes/washy-washy-core/compare/v1.5.1...v1.5.2) (2026-09-09)
+
+### Bug Fixes
+
+* **deps:** bump js-yaml to 4.3.2 for GHSA-2883-xcg3-v3hh ([#54](https://github.com/alrayyes/washy-washy-core/issues/54)) ([1632c12](https://github.com/alrayyes/washy-washy-core/commit/1632c127f48582e9677753734bf0ced7296727f2))
+
 ## [1.5.1](https://github.com/alrayyes/washy-washy-core/compare/v1.5.0...v1.5.1) (2026-09-09)
 
 ### Bug Fixes
