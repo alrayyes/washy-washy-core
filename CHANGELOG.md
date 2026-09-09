@@ -1,3 +1,9 @@
+## [1.5.1](https://github.com/alrayyes/washy-washy-core/compare/v1.5.0...v1.5.1) (2026-09-09)
+
+### Bug Fixes
+
+* **ci:** don't fail Dependabot PRs on a tokenless Codecov upload ([#53](https://github.com/alrayyes/washy-washy-core/issues/53)) ([132d87d](https://github.com/alrayyes/washy-washy-core/commit/132d87d638d11660045530c642e7cb15d8572412)), closes [#52](https://github.com/alrayyes/washy-washy-core/issues/52) [#54](https://github.com/alrayyes/washy-washy-core/issues/54)
+
 ## [1.5.0](https://github.com/alrayyes/washy-washy-core/compare/v1.4.1...v1.5.0) (2026-08-30)
 
 ### Features
