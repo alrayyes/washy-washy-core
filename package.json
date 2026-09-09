@@ -1,6 +1,6 @@
 {
   "name": "@washy-washy/core",
-  "version": "1.5.2",
+  "version": "1.5.3",
   "description": "Chart parsing, mixing rules and machine validation for washy-washy — a laundry chart generator.",
   "keywords": [
     "laundry",

@@ -1,3 +1,9 @@
+## [1.5.3](https://github.com/alrayyes/washy-washy-core/compare/v1.5.2...v1.5.3) (2026-09-09)
+
+### Bug Fixes
+
+* **deps:** downgrade bun.lock to lockfileVersion 1 for Dependabot ([#55](https://github.com/alrayyes/washy-washy-core/issues/55)) ([4b94c69](https://github.com/alrayyes/washy-washy-core/commit/4b94c6957c5523c14aba75d6b8b6898a486d421f))
+
 ## [1.5.2](https://github.com/alrayyes/washy-washy-core/compare/v1.5.1...v1.5.2) (2026-09-09)
 
 ### Bug Fixes
