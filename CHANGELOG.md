@@ -1,3 +1,9 @@
+## [1.5.4](https://github.com/alrayyes/washy-washy-core/compare/v1.5.3...v1.5.4) (2026-09-10)
+
+### Bug Fixes
+
+* **ci:** correct report-type to report_type ([#59](https://github.com/alrayyes/washy-washy-core/issues/59)) ([b833afe](https://github.com/alrayyes/washy-washy-core/commit/b833afe255b41290d84730b693f45d945b012622))
+
 ## [1.5.3](https://github.com/alrayyes/washy-washy-core/compare/v1.5.2...v1.5.3) (2026-09-09)
 
 ### Bug Fixes
