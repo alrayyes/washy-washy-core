@@ -50,6 +50,9 @@
     "test": "bun test",
     "typecheck": "tsc --noEmit"
   },
+  "overrides": {
+    "smol-toml": "1.7.2"
+  },
   "dependencies": {
     "csv-parse": "7.0.2"
   },
