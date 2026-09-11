@@ -107,6 +107,25 @@ jobs:
           fi
       - run: npm pack --dry-run
 
+  # SAST: cross-file taint tracking Biome's pattern-based linting can't do.
+  # `--config=auto` against the free Semgrep Registry ruleset, no login and
+  # no paid tier — `semgrep ci` needs a Semgrep App/AppSec Platform login
+  # even for the same free ruleset (confirmed: `semgrep ci` refuses with
+  # "run `semgrep login` before using `semgrep ci`" when unauthenticated),
+  # so `semgrep scan` is the one of the two AC options that's actually
+  # tokenless. `--config=auto` itself needs Semgrep's anonymous usage
+  # metrics on to resolve which rules apply (`--metrics=off` errors:
+  # "Cannot create auto config when metrics are off") — this reports scan
+  # telemetry (languages detected, rule/finding counts), not source code.
+  semgrep:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    container:
+      image: semgrep/semgrep@sha256:acaac22ffc7b7cc5926de0751b223bce0b2491c33d18422fa72f632c78d81198 # 1.177.0
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - run: semgrep scan --config=auto --error
+
   # Public repo, so this is free — catches a pull request introducing a *new*
   # dependency that's already known-bad at merge time, rather than waiting
   # for Dependabot's next scheduled scan of what's already pinned.

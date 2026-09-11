@@ -21,7 +21,21 @@ concurrency:
 
 jobs:
   release:
-    if: github.event.workflow_run.conclusion == 'success'
+    # `branches: [main]` above filters on the branch the triggering `check`
+    # run reports — for a `pull_request`-triggered run that's the PR's own
+    # HEAD branch, not the base it targets, so a fork PR whose head branch
+    # happens to be named `main` would still match. `event == 'push'` (only
+    # `check`'s `on.push` trigger, never `pull_request`) plus
+    # `head_repository.full_name == github.repository` (never a fork) is
+    # the actual guarantee that the checked-out `head_sha` below is this
+    # repo's own reviewed, already-merged code — semgrep's
+    # yaml.github-actions.security.workflow-run-target-code-checkout,
+    # flagged on first run, is a real gap the `branches:` filter alone
+    # doesn't close.
+    if: |
+      github.event.workflow_run.conclusion == 'success' &&
+      github.event.workflow_run.event == 'push' &&
+      github.event.workflow_run.head_repository.full_name == github.repository
     runs-on: ubuntu-latest
     timeout-minutes: 15
     permissions:
@@ -46,6 +60,12 @@ jobs:
         env:
           RELEASE_TOKEN: ${{ secrets.RELEASE_TOKEN }}
 
+      # The rule matches on the checkout shape alone and can't see the job's
+      # `if:` above, which is the actual mitigation: this only runs for a
+      # `push`-triggered `check` run from this repo (never a fork, never a
+      # pull_request run), so `head_sha` here is already-merged, reviewed
+      # code on `main` — not an incoming PR's.
+      # nosemgrep: yaml.github-actions.security.workflow-run-target-code-checkout.workflow-run-target-code-checkout
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         if: steps.token.outputs.present == 'true'
         with:
