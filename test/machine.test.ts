@@ -1,5 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import { ironSetting, parseMachine } from "../src/index";
+import { formatTemperature, ironSetting, parseMachine } from "../src/index";
 
 const MINIMAL = {
   washer: {
@@ -39,9 +39,171 @@ describe("parseMachine", () => {
   });
 
   test("insists on the parts a card cannot be drawn without", () => {
-    expect(() => parseMachine({ washer: MINIMAL.washer })).toThrow(/iron/);
-    expect(() => parseMachine({ iron: MINIMAL.iron })).toThrow(/washer/);
-    expect(() => parseMachine("not a machine at all")).toThrow();
+    expect(() => parseMachine({ washer: MINIMAL.washer })).toThrow(/iron is missing/);
+    expect(() => parseMachine({ iron: MINIMAL.iron })).toThrow(/washer is missing/);
+  });
+
+  test("rejects a value that isn't an object at all", () => {
+    expect(() => parseMachine("not a machine at all")).toThrow(/the file must contain an object/);
+  });
+
+  test("rejects a null machine value the same as any other non-object", () => {
+    expect(() => parseMachine(null)).toThrow(/the file must contain an object/);
+  });
+
+  test("rejects a null washer or iron rather than treating it as missing", () => {
+    expect(() => parseMachine({ washer: null, iron: MINIMAL.iron })).toThrow(/washer is missing/);
+    expect(() => parseMachine({ washer: MINIMAL.washer, iron: null })).toThrow(/iron is missing/);
+  });
+
+  test("rejects a dial list that isn't an array", () => {
+    const bad = { ...MINIMAL, washer: { ...MINIMAL.washer, programs: "Cottons" } };
+    expect(() => parseMachine(bad)).toThrow(/washer\.programs must be a list of non-empty strings/);
+  });
+
+  test("rejects a dial list containing a non-string entry", () => {
+    const bad = { ...MINIMAL, washer: { ...MINIMAL.washer, programs: ["Cottons", 5] } };
+    expect(() => parseMachine(bad)).toThrow(/washer\.programs must be a list of non-empty strings/);
+  });
+
+  test("rejects a dial list containing an empty string entry", () => {
+    const bad = { ...MINIMAL, washer: { ...MINIMAL.washer, programs: ["Cottons", ""] } };
+    expect(() => parseMachine(bad)).toThrow(/washer\.programs must be a list of non-empty strings/);
+  });
+
+  test("rejects a dial list with a duplicate entry", () => {
+    const dup = {
+      ...MINIMAL,
+      washer: { ...MINIMAL.washer, programs: [...MINIMAL.washer.programs, "Cottons"] },
+    };
+    expect(() => parseMachine(dup)).toThrow(/washer\.programs repeats a value/);
+  });
+
+  test("accepts a dial entry exactly at its length cap", () => {
+    const atCap = {
+      ...MINIMAL,
+      washer: { ...MINIMAL.washer, programs: [...MINIMAL.washer.programs, "x".repeat(32)] },
+    };
+    expect(() => parseMachine(atCap)).not.toThrow();
+  });
+
+  test("names the field when washer options are invalid", () => {
+    const bad = { ...MINIMAL, washer: { ...MINIMAL.washer, options: [""] } };
+    expect(() => parseMachine(bad)).toThrow(/washer\.options must be a list of non-empty strings/);
+  });
+
+  test("names the field when washer spins are invalid", () => {
+    const bad = { ...MINIMAL, washer: { ...MINIMAL.washer, spins: [] } };
+    expect(() => parseMachine(bad)).toThrow(/washer\.spins needs at least 1 entr/);
+  });
+
+  test("rejects a washer or iron name that isn't a string", () => {
+    const bad = { ...MINIMAL, washer: { ...MINIMAL.washer, name: 42 } };
+    expect(() => parseMachine(bad as never)).toThrow(/washer\.name must be a non-empty string/);
+  });
+
+  test("rejects a washer name that is an empty string", () => {
+    const bad = { ...MINIMAL, washer: { ...MINIMAL.washer, name: "" } };
+    expect(() => parseMachine(bad)).toThrow(/washer\.name must be a non-empty string/);
+  });
+
+  test("accepts a washer name exactly at its length cap", () => {
+    const atCap = { ...MINIMAL, washer: { ...MINIMAL.washer, name: "x".repeat(60) } };
+    expect(() => parseMachine(atCap)).not.toThrow();
+  });
+
+  test("defaults washer capacity to empty when the field is omitted", () => {
+    const { capacity: _capacity, ...washerWithoutCapacity } = MINIMAL.washer;
+    const machine = parseMachine({ ...MINIMAL, washer: washerWithoutCapacity });
+    expect(machine.washer.capacity).toBe("");
+  });
+
+  test("defaults washer options to an empty list when the field is omitted", () => {
+    const { options: _options, ...washerWithoutOptions } = MINIMAL.washer;
+    const machine = parseMachine({ ...MINIMAL, washer: washerWithoutOptions });
+    expect(machine.washer.options).toEqual([]);
+  });
+
+  test("rejects an iron name too long, naming the field", () => {
+    const tooLong = { ...MINIMAL, iron: { ...MINIMAL.iron, name: "x".repeat(61) } };
+    expect(() => parseMachine(tooLong)).toThrow(/iron\.name.*61/);
+  });
+
+  test("insists iron.settings is present and a list", () => {
+    const bad = { ...MINIMAL, iron: { name: "Test Iron" } };
+    expect(() => parseMachine(bad)).toThrow(/iron\.settings is missing/);
+  });
+
+  test("insists the iron ring has at least two positions", () => {
+    const bad = { ...MINIMAL, iron: { ...MINIMAL.iron, settings: [MINIMAL.iron.settings[0]] } };
+    expect(() => parseMachine(bad)).toThrow(/iron\.settings needs at least 2 positions/);
+  });
+
+  test("rejects an iron with two settings sharing a key", () => {
+    const bad = {
+      ...MINIMAL,
+      iron: { ...MINIMAL.iron, settings: [MINIMAL.iron.settings[0], MINIMAL.iron.settings[0]] },
+    };
+    expect(() => parseMachine(bad)).toThrow(/iron\.settings repeats a key/);
+  });
+
+  test("rejects an iron setting that isn't an object", () => {
+    const bad = {
+      ...MINIMAL,
+      iron: { ...MINIMAL.iron, settings: [...MINIMAL.iron.settings, "not an object"] },
+    };
+    expect(() => parseMachine(bad)).toThrow(/iron\.settings\[3\] must be an object/);
+  });
+
+  test("rejects a null iron setting", () => {
+    const bad = {
+      ...MINIMAL,
+      iron: { ...MINIMAL.iron, settings: [...MINIMAL.iron.settings, null] },
+    };
+    expect(() => parseMachine(bad)).toThrow(/iron\.settings\[3\] must be an object/);
+  });
+
+  test("rejects an iron setting missing a key", () => {
+    const bad = {
+      ...MINIMAL,
+      iron: { ...MINIMAL.iron, settings: [...MINIMAL.iron.settings, { label: "x" }] },
+    };
+    expect(() => parseMachine(bad)).toThrow(/iron\.settings\[3\]\.key must be a non-empty string/);
+  });
+
+  test("defaults an iron setting's detail to empty when omitted", () => {
+    const machine = parseMachine({
+      ...MINIMAL,
+      iron: { ...MINIMAL.iron, settings: [...MINIMAL.iron.settings, { key: "3", label: "x" }] },
+    });
+    expect(machine.iron.settings[3]?.detail).toBe("");
+  });
+
+  test("rejects an iron setting's detail too long for its slot", () => {
+    const tooLong = {
+      ...MINIMAL,
+      iron: {
+        ...MINIMAL.iron,
+        settings: [...MINIMAL.iron.settings, { key: "3", label: "x", detail: "x".repeat(61) }],
+      },
+    };
+    expect(() => parseMachine(tooLong)).toThrow(/iron\.settings\[3\]\.detail.*61/);
+  });
+
+  test("accepts a dot string exactly at the dial convention's cap", () => {
+    const atCap = {
+      ...MINIMAL,
+      iron: {
+        ...MINIMAL.iron,
+        settings: [...MINIMAL.iron.settings, { key: "3", dots: "x".repeat(5), label: "x" }],
+      },
+    };
+    expect(() => parseMachine(atCap)).not.toThrow();
+  });
+
+  test("carries the iron's steam capability through per setting", () => {
+    const machine = parseMachine(MINIMAL);
+    expect(machine.iron.settings.map((setting) => setting.steam)).toEqual([false, false, true]);
   });
 
   /**
@@ -124,5 +286,20 @@ describe("ironSetting", () => {
     const machine = parseMachine(MINIMAL);
     expect(ironSetting(machine, "2")?.label).toBe("••");
     expect(ironSetting(machine, "nope")).toBeUndefined();
+  });
+});
+
+describe("formatTemperature", () => {
+  test("adds a degree sign to a numeric temperature", () => {
+    expect(formatTemperature("40")).toBe("40°");
+  });
+
+  test("leaves a non-numeric temperature untouched", () => {
+    expect(formatTemperature("cold")).toBe("cold");
+  });
+
+  test("does not add a degree sign unless the entire value is numeric", () => {
+    expect(formatTemperature("x40")).toBe("x40");
+    expect(formatTemperature("40x")).toBe("40x");
   });
 });

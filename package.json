@@ -44,6 +44,7 @@
     "lint:prose:advice": ".tools/vale --glob='!{styles/**,CHANGELOG.md}' .",
     "lint:schema": "bun run schema && git diff --exit-code schema/",
     "lint:yaml": "prettier --check \"**/*.{yml,yaml}\"",
+    "mutation": "stryker run",
     "prepare": "lefthook install",
     "prose:sync": "bun run scripts/install-vale.ts && .tools/vale sync",
     "schema": "ts-json-schema-generator --path src/config.ts --type Config --tsconfig tsconfig.json -o schema/config.schema.json && biome format --write schema/config.schema.json",
@@ -51,6 +52,7 @@
     "typecheck": "tsc --noEmit"
   },
   "overrides": {
+    "qs": "6.16.0",
     "smol-toml": "1.7.2"
   },
   "dependencies": {
@@ -60,11 +62,13 @@
     "@biomejs/biome": "2.5.12",
     "@commitlint/cli": "21.2.2",
     "@commitlint/config-conventional": "21.2.2",
+    "@hughescr/stryker-bun-runner": "1.3.8",
     "@semantic-release/changelog": "7.0.0",
     "@semantic-release/git": "11.0.1",
     "@semantic-release/github": "12.0.9",
     "@semantic-release/npm": "13.1.5",
     "@semantic-release/release-notes-generator": "14.1.1",
+    "@stryker-mutator/core": "9.6.1",
     "@types/bun": "1.4.2",
     "conventional-changelog-conventionalcommits": "10.4.0",
     "lefthook": "2.1.12",
