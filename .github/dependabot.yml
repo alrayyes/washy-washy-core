@@ -25,6 +25,18 @@ updates:
           - prettier
           - markdownlint-cli2
           - lefthook
+    ignore:
+      # 10.0.0 switched the preset from a Handlebars mainTemplate string to a
+      # writer@9+ render function, and 10.4.0 made the mismatch fail loud
+      # instead of silently emitting an empty changelog body.
+      # @semantic-release/release-notes-generator (14.1.1, latest stable) and
+      # the commit-analyzer semantic-release@25 bundles both still pin
+      # conventional-changelog-writer@^8.0.0 — a stable release-notes-generator
+      # bumping past that is only in beta (15.0.0-beta.2) as of 2026-09-11.
+      # Drop this once a stable release-notes-generator ships on writer@9+.
+      # See #77.
+      - dependency-name: "conventional-changelog-conventionalcommits"
+        versions: [">=10.0.0"]
 
   - package-ecosystem: github-actions
     directory: /
