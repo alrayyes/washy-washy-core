@@ -70,7 +70,7 @@
     "@semantic-release/github": "12.0.9",
     "@semantic-release/npm": "13.1.5",
     "@semantic-release/release-notes-generator": "14.1.1",
-    "@stryker-mutator/core": "9.6.1",
+    "@stryker-mutator/core": "10.0.0",
     "@types/bun": "1.4.2",
     "conventional-changelog-conventionalcommits": "10.4.0",
     "lefthook": "2.1.12",
