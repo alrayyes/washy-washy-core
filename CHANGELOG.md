@@ -1,3 +1,9 @@
+## [1.5.6](https://github.com/alrayyes/washy-washy-core/compare/v1.5.5...v1.5.6) (2026-09-11)
+
+### Bug Fixes
+
+* **deps:** pin typescript to 6.0.3, TypeDoc's last supported major ([#80](https://github.com/alrayyes/washy-washy-core/issues/80)) ([c8d1896](https://github.com/alrayyes/washy-washy-core/commit/c8d1896f8bd36a0477e7ab64cdf3c0c019e56cbe)), closes [TypeStrong/typedoc#3098](https://github.com/TypeStrong/typedoc/issues/3098) [#76](https://github.com/alrayyes/washy-washy-core/issues/76)
+
 ## [1.5.5](https://github.com/alrayyes/washy-washy-core/compare/v1.5.4...v1.5.5) (2026-09-11)
 
 ### Bug Fixes
