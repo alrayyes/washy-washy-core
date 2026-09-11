@@ -59,6 +59,10 @@ describe("parseConfig", () => {
     );
   });
 
+  test("rejects a null config value the same as any other non-object", () => {
+    expect(() => parseConfig(null)).toThrow(/config: the file must contain an object/);
+  });
+
   test("rejects a chart that isn't an array", () => {
     expect(() => parseConfig(config({ chart: { not: "an array" } }))).toThrow(
       /config: chart must be an array of rows/,

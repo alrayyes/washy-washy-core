@@ -2,9 +2,12 @@ import { describe, expect, test } from "bun:test";
 import {
   chartFromJson,
   chartToJson,
+  type Instruction,
+  instructionsFromRows,
   parseInstructions,
   parseMachine,
   type Row,
+  rowsFromInstructions,
 } from "../src/index";
 
 // Covers every value the tests below exercise: valid and invalid programs,
@@ -64,6 +67,12 @@ describe("parseInstructions", () => {
     expect(item?.mixTags).toEqual(["solo", "dye-bleeder"]);
   });
 
+  test("trims whitespace around pipe-separated values", () => {
+    const row = ROW.replace("Extra Rinse", " Extra Rinse | Eco ");
+    const [item] = parseInstructions(csv(row), machine);
+    expect(item?.options).toEqual(["Extra Rinse", "Eco"]);
+  });
+
   test("accepts an empty options cell", () => {
     const [item] = parseInstructions(csv(ROW.replace(",Extra Rinse,", ",,")), machine);
     expect(item?.options).toEqual([]);
@@ -73,6 +82,21 @@ describe("parseInstructions", () => {
     expect(() => parseInstructions(csv(ROW.replace("Cottons", "Turbo Wash")), machine)).toThrow(
       /row 2, column "program"/,
     );
+  });
+
+  test("lists every allowed value, comma-separated, when rejecting one", () => {
+    expect(() => parseInstructions(csv(ROW.replace("Cottons", "Turbo Wash")), machine)).toThrow(
+      /"Turbo Wash" is not one of Cottons, Wool/,
+    );
+  });
+
+  test("names thrown row errors 'RowError' for callers that branch on it", () => {
+    try {
+      parseInstructions(csv(ROW.replace("Cottons", "Turbo Wash")), machine);
+      throw new Error("expected parseInstructions to throw");
+    } catch (error) {
+      expect((error as Error).name).toBe("RowError");
+    }
   });
 
   test("rejects a temperature the machine cannot be set to", () => {
@@ -105,6 +129,27 @@ describe("parseInstructions", () => {
     );
   });
 
+  test("tolerates surrounding whitespace and mixed case in yes/no values", () => {
+    const [row] = JSON.parse(chartToJson(parseInstructions(csv(), machine)));
+    row.fabric_softener = " YES ";
+    const [item] = chartFromJson(JSON.stringify([row]), machine);
+    expect(item?.fabricSoftener).toBe(true);
+  });
+
+  test.each(["yes", "y", "true", "1"])("recognises %s as a yes/no true value", (token) => {
+    const [row] = JSON.parse(chartToJson(parseInstructions(csv(), machine)));
+    row.fabric_softener = token;
+    const [item] = chartFromJson(JSON.stringify([row]), machine);
+    expect(item?.fabricSoftener).toBe(true);
+  });
+
+  test.each(["no", "n", "false", "0"])("recognises %s as a yes/no false value", (token) => {
+    const [row] = JSON.parse(chartToJson(parseInstructions(csv(), machine)));
+    row.fabric_softener = token;
+    const [item] = chartFromJson(JSON.stringify([row]), machine);
+    expect(item?.fabricSoftener).toBe(false);
+  });
+
   test("rejects a duration that doesn't match H:MM", () => {
     expect(() => parseInstructions(csv(ROW.replace("~2:00", "banana")), machine)).toThrow(
       /column "duration": must match H:MM, found "banana"/,
@@ -114,6 +159,23 @@ describe("parseInstructions", () => {
   test("leaves the duration empty when a row doesn't give one", () => {
     const [item] = parseInstructions(csv(ROW.replace("~2:00", "")), machine);
     expect(item?.duration).toBe("");
+  });
+
+  test("accepts a duration with no leading tilde", () => {
+    const [item] = parseInstructions(csv(ROW.replace("~2:00", "2:00")), machine);
+    expect(item?.duration).toBe("2:00");
+  });
+
+  test("rejects a duration with trailing characters after the minutes", () => {
+    expect(() => parseInstructions(csv(ROW.replace("~2:00", "2:00pm")), machine)).toThrow(
+      /column "duration": must match H:MM/,
+    );
+  });
+
+  test("rejects a duration whose digits don't start at the beginning of the value", () => {
+    expect(() => parseInstructions(csv(ROW.replace("~2:00", "at 2:00")), machine)).toThrow(
+      /column "duration": must match H:MM/,
+    );
   });
 
   test("reads an optional reference name and link", () => {
@@ -140,14 +202,33 @@ describe("parseInstructions", () => {
     ).toThrow(/column "clothing_type"/);
   });
 
-  test("names every column it is missing", () => {
+  test("names every column it is missing, comma-separated", () => {
     expect(() => parseInstructions("clothing_type,detergent\nDark,Dark liquid\n", machine)).toThrow(
-      /missing column\(s\).*fabric_softener/,
+      /missing column\(s\): fabric_softener, temperature/,
     );
   });
 
   test("rejects a header with no rows", () => {
-    expect(() => parseInstructions(`${HEADER}\n`, machine)).toThrow(/no rows/);
+    expect(() => parseInstructions(`${HEADER}\n`, machine)).toThrow(
+      /the CSV has a header but no rows/,
+    );
+  });
+
+  test("skips blank lines in the csv", () => {
+    const withBlank = `${HEADER}\n\n${ROW}\n`;
+    const [item] = parseInstructions(withBlank, machine);
+    expect(item?.clothingType).toBe("Dark");
+  });
+
+  test("trims whitespace from csv values", () => {
+    const row = ROW.replace("Dark liquid", " Dark liquid ");
+    const [item] = parseInstructions(csv(row), machine);
+    expect(item?.detergent).toBe("Dark liquid");
+  });
+
+  test("strips a byte-order mark from the start of the csv", () => {
+    const [item] = parseInstructions(`\uFEFF${csv()}`, machine);
+    expect(item?.clothingType).toBe("Dark");
   });
 
   /**
@@ -291,5 +372,148 @@ describe("the JSON chart format", () => {
     const [row] = JSON.parse(chartToJson(parseInstructions(csv(), machine)));
     row.program = "Turbo Wash";
     expect(() => chartFromJson(JSON.stringify([row]), machine)).toThrow(/column "program"/);
+  });
+
+  test("rejects an empty JSON chart", () => {
+    expect(() => chartFromJson("[]", machine)).toThrow(/the chart has no rows/);
+  });
+
+  test("uses a pipe to separate multiple options and tags in the JSON chart", () => {
+    const row = ROW.replace("Extra Rinse", "Eco|Extra Rinse").replace(
+      "dye-bleeder",
+      "solo|dye-bleeder",
+    );
+    const instructions = parseInstructions(csv(row), machine);
+    const [parsedRow] = JSON.parse(chartToJson(instructions));
+    expect(parsedRow.options).toBe("Eco|Extra Rinse");
+    expect(parsedRow.mix_tags).toBe("solo|dye-bleeder");
+  });
+});
+
+describe("rowsFromInstructions", () => {
+  function instruction(overrides: Partial<Instruction> = {}): Instruction {
+    return {
+      clothingType: "Dark",
+      detergent: "",
+      fabricSoftener: false,
+      temperature: "30",
+      spin: "800",
+      duration: "",
+      program: "Cottons",
+      options: [],
+      ironing: false,
+      ironingNotes: "",
+      ironSetting: "",
+      drying: "",
+      colourGroup: "dark",
+      mixTags: [],
+      notes: "",
+      referenceName: "",
+      referenceLink: "",
+      ...overrides,
+    };
+  }
+
+  test("writes 'no' for a false fabric softener or ironing flag, not blank", () => {
+    const [row] = rowsFromInstructions([instruction({ fabricSoftener: false, ironing: false })]);
+    expect(row?.fabric_softener).toBe("no");
+    expect(row?.ironing).toBe("no");
+  });
+
+  test("writes 'yes' for a true fabric softener or ironing flag", () => {
+    const [row] = rowsFromInstructions([instruction({ fabricSoftener: true, ironing: true })]);
+    expect(row?.fabric_softener).toBe("yes");
+    expect(row?.ironing).toBe("yes");
+  });
+});
+
+describe("fields the schema allows to be entirely absent from a row", () => {
+  // A CSV row always supplies every column (parseInstructions rejects a
+  // header missing one), so these `?? ""` fallbacks only ever fire for a
+  // row object built by hand or round-tripped from some other JSON source
+  // where a key was left out. `withMissing` keeps the key present — the
+  // header check cares about key presence, not value — but sets its value
+  // to `undefined`, the only way to reach the fallback.
+  const FULL: Record<string, string> = {
+    clothing_type: "Dark",
+    detergent: "Dark liquid",
+    fabric_softener: "no",
+    temperature: "30",
+    spin: "800",
+    duration: "~2:00",
+    program: "Cottons",
+    options: "Extra Rinse",
+    ironing: "no",
+    ironing_notes: "Inside out",
+    iron_setting: "",
+    drying: "Line dry",
+    colour_group: "dark",
+    mix_tags: "dye-bleeder",
+    notes: "",
+    reference_name: "",
+    reference_link: "",
+  };
+
+  function withMissing(column: string): Row {
+    return { ...FULL, [column]: undefined } as unknown as Row;
+  }
+
+  test("trims whitespace from the clothing type", () => {
+    const [item] = instructionsFromRows([{ ...FULL, clothing_type: "  Dark  " }], machine);
+    expect(item?.clothingType).toBe("Dark");
+  });
+
+  test("rejects a missing clothing type the same as an empty one", () => {
+    expect(() => instructionsFromRows([withMissing("clothing_type")], machine)).toThrow(
+      /clothing_type.*must not be empty/,
+    );
+  });
+
+  test("defaults free-text fields to empty rather than a placeholder when missing", () => {
+    expect(instructionsFromRows([withMissing("detergent")], machine)[0]?.detergent).toBe("");
+    expect(instructionsFromRows([withMissing("ironing_notes")], machine)[0]?.ironingNotes).toBe("");
+    expect(instructionsFromRows([withMissing("drying")], machine)[0]?.drying).toBe("");
+    expect(instructionsFromRows([withMissing("notes")], machine)[0]?.notes).toBe("");
+    expect(instructionsFromRows([withMissing("reference_name")], machine)[0]?.referenceName).toBe(
+      "",
+    );
+    expect(instructionsFromRows([withMissing("reference_link")], machine)[0]?.referenceLink).toBe(
+      "",
+    );
+  });
+
+  test("defaults duration to empty when the field is missing", () => {
+    expect(instructionsFromRows([withMissing("duration")], machine)[0]?.duration).toBe("");
+  });
+
+  test("treats a missing options cell as no options selected", () => {
+    expect(instructionsFromRows([withMissing("options")], machine)[0]?.options).toEqual([]);
+  });
+
+  test("treats a missing mix_tags cell as no tags selected", () => {
+    expect(instructionsFromRows([withMissing("mix_tags")], machine)[0]?.mixTags).toEqual([]);
+  });
+
+  test("defaults the iron setting to empty when missing and the pile isn't ironed", () => {
+    expect(instructionsFromRows([withMissing("iron_setting")], machine)[0]?.ironSetting).toBe("");
+  });
+
+  test("trims whitespace from the iron setting position", () => {
+    const [item] = instructionsFromRows(
+      [{ ...FULL, ironing: "yes", iron_setting: " 2 " }],
+      machine,
+    );
+    expect(item?.ironSetting).toBe("2");
+  });
+
+  test.each([
+    ["temperature", /column "temperature": "" is not one of/],
+    ["spin", /column "spin": "" is not one of/],
+    ["program", /column "program": "" is not one of/],
+    ["colour_group", /column "colour_group": "" is not one of/],
+    ["fabric_softener", /column "fabric_softener": "" is not a yes\/no value/],
+    ["ironing", /column "ironing": "" is not a yes\/no value/],
+  ] as const)("rejects a missing %s the same as an empty one", (column, expected) => {
+    expect(() => instructionsFromRows([withMissing(column)], machine)).toThrow(expected);
   });
 });

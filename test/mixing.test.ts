@@ -1,5 +1,7 @@
 import { describe, expect, test } from "bun:test";
 import {
+  blockerCode,
+  blockerLegend,
   canMix,
   cardGroups,
   type Instruction,
@@ -72,6 +74,52 @@ describe("mixBlocker", () => {
     const a = pile({ mixTags: ["lint-shedder"], colourGroup: "white" });
     const b = pile({ colourGroup: "dark", temperature: "30" });
     expect(mixBlocker(a, b)).toBe(mixBlocker(b, a));
+  });
+
+  test("reports solo when only the second pile is solo, not just the first", () => {
+    expect(mixBlocker(pile(), pile({ mixTags: ["solo"] }))).toBe("solo");
+  });
+
+  test("colour group 'any' is compatible with everything", () => {
+    expect(mixBlocker(pile({ colourGroup: "any" }), pile({ colourGroup: "white" }))).toBeNull();
+  });
+
+  test("colour group 'any' is compatible with everything, symmetrically", () => {
+    expect(mixBlocker(pile({ colourGroup: "white" }), pile({ colourGroup: "any" }))).toBeNull();
+  });
+
+  test("treats a subset of options as different settings, not the same ones", () => {
+    const a = pile({ options: ["Eco Perfect"] });
+    const b = pile({ options: ["Eco Perfect", "Extra spoelen"] });
+    expect(mixBlocker(a, b)).toBe("settings");
+  });
+
+  test("distinguishing option sets of the same size are not the same settings", () => {
+    const a = pile({ options: ["Eco Perfect", "Extra spoelen"] });
+    const b = pile({ options: ["Eco Perfect", "Snelwas"] });
+    expect(mixBlocker(a, b)).toBe("settings");
+  });
+});
+
+describe("blockerLegend", () => {
+  test("gives a human sentence for each blocker", () => {
+    expect(blockerLegend).toEqual({
+      solo: "Wash on its own",
+      settings: "Different programme, temperature, spin or options",
+      colour: "Colours would run into each other",
+      lint: "One sheds lint onto the other",
+    });
+  });
+});
+
+describe("blockerCode", () => {
+  test("gives a one-glyph shorthand for each blocker", () => {
+    expect(blockerCode).toEqual({
+      solo: "S",
+      settings: "P",
+      colour: "C",
+      lint: "L",
+    });
   });
 });
 
@@ -220,6 +268,17 @@ describe("ironGroups", () => {
     ];
     expect(ironGroups(items, order).flat()).toHaveLength(items.length);
   });
+
+  test("ranks the very first thermostat position first, not last", () => {
+    const groups = ironGroups(
+      [
+        pile({ clothingType: "Cotton", ironing: true, ironSetting: "1" }),
+        pile({ clothingType: "Wool", ironing: true, ironSetting: "min" }),
+      ],
+      order,
+    );
+    expect(groups.map((group) => (group[0] as Instruction).ironSetting)).toEqual(["min", "1"]);
+  });
 });
 
 describe("loadGroups", () => {
@@ -228,6 +287,18 @@ describe("loadGroups", () => {
       pile({ clothingType: "A" }),
       pile({ clothingType: "B" }),
       pile({ clothingType: "C", temperature: "60", colourGroup: "white" }),
+    ]);
+    expect(groups.map((group) => group.map((item) => item.clothingType))).toEqual([
+      ["A", "B"],
+      ["C"],
+    ]);
+  });
+
+  test("only joins a load if compatible with every member of it, not just one", () => {
+    const groups = loadGroups([
+      pile({ clothingType: "A", colourGroup: "any" }),
+      pile({ clothingType: "B", colourGroup: "white" }),
+      pile({ clothingType: "C", colourGroup: "dark" }),
     ]);
     expect(groups.map((group) => group.map((item) => item.clothingType))).toEqual([
       ["A", "B"],
