@@ -19,7 +19,11 @@ bun run prose:sync   # fetches Vale's style packages; needed once before `check`
   strings and parsed values in, values or a thrown error out, no file I/O,
   no network, no other layer that could fail independently. There's nothing
   here an integration or end-to-end test would catch that a unit test
-  doesn't already, so `test/*.test.ts` is the whole suite.
+  doesn't already, so `test/*.test.ts` is the whole runtime suite.
+  `test-d/*.test-d.ts` is a second, narrower kind: [tsd](https://github.com/tsdjs/tsd)
+  assertions on the primary exports' TSDoc `@example` usage, proving a
+  signature change breaking a documented example is caught by the compiler
+  — see `lint:types-d` below.
 - One logical change per commit. Commits follow
   [Conventional Commits](https://www.conventionalcommits.org/), linted by
   commitlint on every commit and, again, on the pull request title (a squash
@@ -44,6 +48,13 @@ bun run prose:sync   # fetches Vale's style packages; needed once before `check`
 - `bun run schema` — regenerate `schema/config.schema.json` from the
   `Config` type; `lint:schema` (part of `check`) fails if this would produce
   a diff, so run it after touching `Config`'s shape and commit the result
+- `bun run lint:types-d` — build, then check `test-d/*.test-d.ts` against
+  `dist/`'s emitted types with [tsd](https://github.com/tsdjs/tsd). tsd
+  reads a package's top-level `types`/`main` field to find its own test
+  file (`<name>.test-d.ts`) or fall back to a `test-d/` directory, but its
+  `.d.ts`-suffix assumption doesn't match this package's `.d.mts` output —
+  confirmed it silently type-checks the typings file against itself and
+  reports success either way if you drop `--files`, so don't
 - `bun run lint:fix` — Biome, writing its own fixes
 - `bun run lint:prose:advice` — the full Vale read, including style advice
   the error-level `lint:prose` doesn't fail on
