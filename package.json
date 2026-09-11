@@ -25,6 +25,7 @@
       "default": "./dist/browser.mjs"
     }
   },
+  "types": "./dist/index.d.mts",
   "files": [
     "dist",
     "schema",
@@ -33,7 +34,7 @@
   ],
   "scripts": {
     "build": "tsdown",
-    "check": "bun run lint && bun run lint:md && bun run lint:yaml && bun run lint:package-json && bun run lint:prose && bun run lint:schema && bun run typecheck && bun test",
+    "check": "bun run lint && bun run lint:md && bun run lint:yaml && bun run lint:package-json && bun run lint:prose && bun run lint:schema && bun run lint:types-d && bun run typecheck && bun test",
     "docs": "typedoc",
     "format": "prettier --write .",
     "lint": "biome check .",
@@ -43,6 +44,7 @@
     "lint:prose": ".tools/vale --glob='!{styles/**,CHANGELOG.md}' --minAlertLevel=error .",
     "lint:prose:advice": ".tools/vale --glob='!{styles/**,CHANGELOG.md}' .",
     "lint:schema": "bun run schema && git diff --exit-code schema/",
+    "lint:types-d": "bun run build && tsd --files \"test-d/**/*.test-d.ts\"",
     "lint:yaml": "prettier --check \"**/*.{yml,yaml}\"",
     "mutation": "stryker run",
     "prepare": "lefthook install",
@@ -77,6 +79,7 @@
     "semantic-release": "25.0.9",
     "sort-package-json": "4.0.0",
     "ts-json-schema-generator": "2.9.0",
+    "tsd": "0.33.0",
     "tsdown": "0.23.0",
     "typedoc": "0.28.20",
     "typescript": "7.0.2"
