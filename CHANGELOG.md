@@ -1,3 +1,10 @@
+## [1.5.5](https://github.com/alrayyes/washy-washy-core/compare/v1.5.4...v1.5.5) (2026-09-11)
+
+### Bug Fixes
+
+* **deps:** revert conventional-changelog-conventionalcommits to 9.3.1 ([#79](https://github.com/alrayyes/washy-washy-core/issues/79)) ([063f6ce](https://github.com/alrayyes/washy-washy-core/commit/063f6ce486c11ca96c174479f98f59f40590bbc2)), closes [conventional-changelog/conventional-changelog#1495](https://github.com/conventional-changelog/conventional-changelog/issues/1495) [#77](https://github.com/alrayyes/washy-washy-core/issues/77)
+* **templates:** use GitHub's standard labels, not kind/+topic/ ([#70](https://github.com/alrayyes/washy-washy-core/issues/70)) ([49fee04](https://github.com/alrayyes/washy-washy-core/commit/49fee04082332ecebfa9c5b1cd81dca825ba7eb8)), closes [#40](https://github.com/alrayyes/washy-washy-core/issues/40) [#65](https://github.com/alrayyes/washy-washy-core/issues/65)
+
 ## [1.5.4](https://github.com/alrayyes/washy-washy-core/compare/v1.5.3...v1.5.4) (2026-09-10)
 
 ### Bug Fixes
