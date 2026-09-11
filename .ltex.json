@@ -28,6 +28,7 @@
       "postinstall",
       "proselint",
       "serializer",
+      "tsd",
       "tsdown",
       "typecheck",
       "typechecks",
