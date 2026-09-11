@@ -6,6 +6,7 @@
       "!**/node_modules",
       "!**/dist",
       "!**/docs-site",
+      "!**/reports",
       "!styles/Google",
       "!styles/proselint"
     ]
