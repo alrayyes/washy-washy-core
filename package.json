@@ -52,6 +52,7 @@
     "typecheck": "tsc --noEmit"
   },
   "overrides": {
+    "qs": "6.16.0",
     "smol-toml": "1.7.2"
   },
   "dependencies": {
