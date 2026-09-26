@@ -1,0 +1,23 @@
+# @washy-washy/core
+
+> Chart parsing, machine validation, and mixing rules for washy-washy, a
+> laundry chart generator. Pure logic only — no rendering or file I/O — shared
+> by the CLI, the web app, and @washy-washy/pdf.
+
+Two entry points: `@washy-washy/core/browser` (everything except CSV
+parsing, safe for a browser bundle) and `@washy-washy/core` (the full API,
+for Node/Bun reading a CSV from disk). Every exported function and type
+carries a TSDoc comment with a runnable example.
+
+## Docs
+
+- [API reference](https://alrayyes.github.io/washy-washy-core/modules.html): generated TypeDoc reference, one page per exported function, type, and interface.
+- [Browser entry point](https://alrayyes.github.io/washy-washy-core/modules/browser.html): the `@washy-washy/core/browser` module — everything except CSV parsing.
+- [Node/Bun entry point](https://alrayyes.github.io/washy-washy-core/modules/index.html): the `@washy-washy/core` module — the full API, including CSV parsing.
+- [Architecture](https://alrayyes.github.io/washy-washy-core/media/ARCHITECTURE.md): how the modules fit together.
+
+## Project
+
+- [README](https://github.com/alrayyes/washy-washy-core#readme): install instructions, usage examples, and the two-entry-point explanation.
+- [Source](https://github.com/alrayyes/washy-washy-core): the GitHub repository.
+- [npm package](https://www.npmjs.com/package/@washy-washy/core): the published package.
