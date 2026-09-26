@@ -30,6 +30,11 @@ jobs:
           bun-version: 1.4.0
       - run: bun install --frozen-lockfile
       - run: bun run docs
+      # typedoc 0.28 has no config option left to copy an arbitrary static
+      # file into its output directory (the old `public` option is gone),
+      # so llms.txt (llmstxt.org) is copied into the built site here rather
+      # than via typedoc itself.
+      - run: cp llms.txt docs-site/llms.txt
       - uses: actions/configure-pages@45bfe0192ca1faeb007ade9deae92b16b8254a0d # v6.0.0
       - uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0
         with:
