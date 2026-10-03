@@ -59,7 +59,7 @@
     "smol-toml": "1.7.2"
   },
   "dependencies": {
-    "csv-parse": "7.0.2"
+    "csv-parse": "7.0.3"
   },
   "devDependencies": {
     "@biomejs/biome": "2.5.14",
