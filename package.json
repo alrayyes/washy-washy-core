@@ -54,6 +54,7 @@
     "typecheck": "tsc --noEmit"
   },
   "overrides": {
+    "markdown-it": "14.3.2",
     "qs": "6.16.0",
     "smol-toml": "1.7.2"
   },
