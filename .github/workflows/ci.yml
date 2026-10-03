@@ -40,7 +40,15 @@ jobs:
       # Pinning a dependency stops it drifting; it says nothing about the
       # pinned version having a known CVE. Separate from Dependabot, which
       # only raises a pull request for a version that already moved.
-      - run: bun audit
+      # Three ignored advisories, all transitive and dev-only (never
+      # shipped), none with a published fix: braces and http-cache-semantics
+      # (semantic-release tooling) and js-yaml 5.x (markdownlint-cli2).
+      # Revisit when any of them publishes a patched release.
+      - run: >-
+          bun audit
+          --ignore GHSA-vfj7-8cjw-p6xm
+          --ignore GHSA-ch52-4w7c-c8xp
+          --ignore GHSA-r3ph-w7gj-g6xm
       - uses: codecov/codecov-action@303a32d7a59b442fa8d48b6a1cc6825c09c847a5 # v7.1.1
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
