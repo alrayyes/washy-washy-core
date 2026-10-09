@@ -1,3 +1,16 @@
+## [1.6.0](https://github.com/alrayyes/washy-washy-core/compare/v1.5.6...v1.6.0) (2026-10-09)
+
+### Features
+
+* **ci:** publish test and coverage reports with the API docs ([#96](https://github.com/alrayyes/washy-washy-core/issues/96)) ([d8f21e9](https://github.com/alrayyes/washy-washy-core/commit/d8f21e99113ecc93831a522f715064d562c69add))
+
+### Bug Fixes
+
+* **deps:** bump csv-parse from 7.0.2 to 7.0.3 ([f4a4e27](https://github.com/alrayyes/washy-washy-core/commit/f4a4e27e6c675ce33f3de4d42d4b4eccd6e17051))
+* **deps:** clear the bun audit advisories ([4c0c136](https://github.com/alrayyes/washy-washy-core/commit/4c0c1368ec1c379994c8a8c53eb04282029e8dfe)), closes [#93](https://github.com/alrayyes/washy-washy-core/issues/93)
+* **deps:** override handlebars, katex, postcss-selector-parser and smol-toml ([2281fd7](https://github.com/alrayyes/washy-washy-core/commit/2281fd743b11b6dff5a656d028a0f8e9c8ceaa24))
+* **deps:** pin typescript back to 6.0.3 for typedoc ([#99](https://github.com/alrayyes/washy-washy-core/issues/99)) ([3822f4c](https://github.com/alrayyes/washy-washy-core/commit/3822f4cd2800e32a7e1e767451771cd46566e1c3)), closes [#76](https://github.com/alrayyes/washy-washy-core/issues/76) [#76](https://github.com/alrayyes/washy-washy-core/issues/76) [#76](https://github.com/alrayyes/washy-washy-core/issues/76)
+
 ## [1.5.6](https://github.com/alrayyes/washy-washy-core/compare/v1.5.5...v1.5.6) (2026-09-11)
 
 ### Bug Fixes
