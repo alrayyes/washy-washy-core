@@ -116,6 +116,16 @@ bun run build    # emit dist/ (tsdown)
 See [CONTRIBUTING.md](CONTRIBUTING.md) and, for how the modules fit together,
 [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
 
+## Reports
+
+Every push to `main` that passes CI publishes its reports next to the API
+reference:
+
+- [Report index](https://apis.ryankes.eu/washy-washy-core/reports/)
+- [Unit tests, JUnit XML](https://apis.ryankes.eu/washy-washy-core/reports/tests/unit.xml)
+- [Coverage, HTML](https://apis.ryankes.eu/washy-washy-core/reports/coverage/)
+- [Coverage, Cobertura XML](https://apis.ryankes.eu/washy-washy-core/reports/coverage/coverage.xml)
+
 ## License
 
 [GPL-3.0-or-later](LICENSE).
