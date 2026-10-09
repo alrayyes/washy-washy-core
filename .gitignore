@@ -33,3 +33,6 @@ logs
 .tools
 styles/Google
 styles/proselint
+
+# assembled by the pages job in ci.yml
+site
