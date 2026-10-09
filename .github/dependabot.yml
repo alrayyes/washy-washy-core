@@ -37,6 +37,14 @@ updates:
       # See #77.
       - dependency-name: "conventional-changelog-conventionalcommits"
         versions: [">=10.0.0"]
+      # 7.0 is the native rewrite and its npm package exports almost none of
+      # the classic compiler API. typedoc 0.28.20 (latest) crashes on it and
+      # peers on typescript 5.0.x to 6.0.x, so the docs build, and with it the
+      # Pages deploy, broke when Dependabot bumped this in 1fd79ca. Drop this
+      # once a typedoc release supports TypeScript 7
+      # (https://github.com/TypeStrong/typedoc/issues/3098). See #76.
+      - dependency-name: "typescript"
+        versions: [">=7.0.0"]
 
   - package-ecosystem: github-actions
     directory: /
