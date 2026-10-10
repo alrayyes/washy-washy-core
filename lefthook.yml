@@ -20,7 +20,10 @@ pre-commit:
             stage_fixed: true
           - name: markdownlint
             glob: "*.md"
-            run: bunx --bun markdownlint-cli2 {staged_files}
+            # --no-globs: .markdownlint-cli2.yaml sets globs for the full-tree
+            # lint:md, and markdownlint-cli2 adds those to the command line, so
+            # without it every commit lints the whole tree.
+            run: bunx --bun markdownlint-cli2 --no-globs {staged_files}
     - name: yaml
       glob: "*.{yml,yaml}"
       run: bunx --bun prettier --write {staged_files}
