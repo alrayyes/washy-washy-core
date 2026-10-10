@@ -1,3 +1,9 @@
+## [1.6.1](https://github.com/alrayyes/washy-washy-core/compare/v1.6.0...v1.6.1) (2026-10-10)
+
+### Bug Fixes
+
+* **hooks:** lint only staged Markdown in pre-commit ([fdbffd5](https://github.com/alrayyes/washy-washy-core/commit/fdbffd54f34f7017b2918c1eeba694f1755318df)), closes [#102](https://github.com/alrayyes/washy-washy-core/issues/102)
+
 ## [1.6.0](https://github.com/alrayyes/washy-washy-core/compare/v1.5.6...v1.6.0) (2026-10-09)
 
 ### Features
