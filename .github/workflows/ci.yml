@@ -79,18 +79,6 @@ jobs:
           path: site/reports
           if-no-files-found: error
           retention-days: 1
-      # Pinning a dependency stops it drifting; it says nothing about the
-      # pinned version having a known CVE. Separate from Dependabot, which
-      # only raises a pull request for a version that already moved.
-      # Three ignored advisories, all transitive and dev-only (never
-      # shipped), none with a published fix: braces and http-cache-semantics
-      # (semantic-release tooling) and js-yaml 5.x (markdownlint-cli2).
-      # Revisit when any of them publishes a patched release.
-      - run: >-
-          bun audit
-          --ignore GHSA-vfj7-8cjw-p6xm
-          --ignore GHSA-ch52-4w7c-c8xp
-          --ignore GHSA-r3ph-w7gj-g6xm
       - uses: codecov/codecov-action@303a32d7a59b442fa8d48b6a1cc6825c09c847a5 # v7.1.1
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
@@ -176,9 +164,43 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - run: semgrep scan --config=auto --error
 
+  # Fails only on advisories this change adds to bun.lock over its base
+  # (rules/dependencies.md). What is already on main is the scan's to track, in
+  # advisory-scan.yml, so a new advisory never turns an unrelated pull request
+  # red. The job always runs and reports, so it can be a required check; its
+  # steps run only when package.json or bun.lock changed, and on a push to main.
+  # bun audit reads the lockfile, so neither side needs an install.
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+      - id: changed
+        env:
+          EVENT: ${{ github.event_name }}
+          BASE: ${{ github.event.pull_request.base.sha }}
+        run: |
+          if [ "${EVENT}" != pull_request ] || git diff --name-only "${BASE}...HEAD" | grep -Eq '^(package\.json|bun\.lock)$'; then
+            echo "deps=true" >> "$GITHUB_OUTPUT"
+          fi
+      - if: steps.changed.outputs.deps == 'true'
+        uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0
+        with:
+          bun-version: 1.4.0
+      # Pinned to a main commit of alrayyes/advisory-scan until its first release; re-pin then.
+      - if: steps.changed.outputs.deps == 'true'
+        uses: alrayyes/advisory-scan@425418a63e80eb10142fbd2e82127b7ef3a51d68
+        with:
+          mode: gate
+          command: bun audit
+
   # Public repo, so this is free — catches a pull request introducing a *new*
   # dependency that's already known-bad at merge time, rather than waiting
-  # for Dependabot's next scheduled scan of what's already pinned.
+  # for Dependabot's next scheduled scan of what's already pinned. It stays
+  # beside the audit job because the dependency graph includes the Actions
+  # this workflow uses, and bun audit sees only bun.lock.
   dependency-review:
     if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
