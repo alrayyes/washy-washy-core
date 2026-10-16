@@ -55,6 +55,7 @@
   },
   "overrides": {
     "handlebars": "4.7.10",
+    "http-cache-semantics": "4.3.0",
     "katex": "0.18.11",
     "markdown-it": "14.3.2",
     "postcss-selector-parser": "7.1.6",
