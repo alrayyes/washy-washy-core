@@ -1,3 +1,9 @@
+## [1.6.2](https://github.com/alrayyes/washy-washy-core/compare/v1.6.1...v1.6.2) (2026-10-16)
+
+### Bug Fixes
+
+* **deps:** override http-cache-semantics ([#110](https://github.com/alrayyes/washy-washy-core/issues/110)) ([7b81736](https://github.com/alrayyes/washy-washy-core/commit/7b817368fc91cd96e1a2685a0451c3d8c4119b72)), closes [#106](https://github.com/alrayyes/washy-washy-core/issues/106)
+
 ## [1.6.1](https://github.com/alrayyes/washy-washy-core/compare/v1.6.0...v1.6.1) (2026-10-10)
 
 ### Bug Fixes
