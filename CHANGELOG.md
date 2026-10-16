@@ -1,3 +1,9 @@
+## [1.6.3](https://github.com/alrayyes/washy-washy-core/compare/v1.6.2...v1.6.3) (2026-10-16)
+
+### Bug Fixes
+
+* **deps:** pin npm to 11.21.1 so its bundled http-cache-semantics is 4.3.0 ([#111](https://github.com/alrayyes/washy-washy-core/issues/111)) ([8d72c72](https://github.com/alrayyes/washy-washy-core/commit/8d72c727b71aeeaa348f96c1905b560ac2a73f52))
+
 ## [1.6.2](https://github.com/alrayyes/washy-washy-core/compare/v1.6.1...v1.6.2) (2026-10-16)
 
 ### Bug Fixes
