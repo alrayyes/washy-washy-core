@@ -11,6 +11,10 @@ bun run prepare      # installs the git hooks (lefthook)
 bun run prose:sync   # fetches Vale's style packages; needed once before `check` works
 ```
 
+[gitleaks](https://github.com/gitleaks/gitleaks) has to be on your `PATH`. It scans
+the staged changes on every commit and the whole history on every push, and CI
+scans the whole history again on every pull request.
+
 ## Workflow
 
 - The failing test comes first, then the least code that makes it pass, then
@@ -33,8 +37,9 @@ bun run prose:sync   # fetches Vale's style packages; needed once before `check`
   footer a major, and a pull request of only `docs:`/`chore:` releases
   nothing).
 - `bun run check` before you push — lint, typecheck, test, in that order. The
-  pre-push hook runs the same commands, so a red push means something the
-  hook itself couldn't catch (usually a merge in between).
+  pre-push hook runs the same commands, plus a gitleaks scan of the whole
+  history, so a red push means something the hook itself couldn't catch
+  (usually a merge in between).
 - Work lands through a pull request. Nothing is pushed directly to `main`.
 
 ## Commands
