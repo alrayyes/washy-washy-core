@@ -67,8 +67,8 @@
   },
   "devDependencies": {
     "@biomejs/biome": "2.5.15",
-    "@commitlint/cli": "21.2.3",
-    "@commitlint/config-conventional": "21.2.3",
+    "@commitlint/cli": "21.2.4",
+    "@commitlint/config-conventional": "21.2.4",
     "@hughescr/stryker-bun-runner": "1.6.0",
     "@semantic-release/changelog": "7.0.0",
     "@semantic-release/git": "11.0.1",
