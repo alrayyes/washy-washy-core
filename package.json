@@ -60,6 +60,7 @@
     "npm": "11.21.1",
     "postcss-selector-parser": "7.1.6",
     "qs": "6.16.0",
+    "re2js": "2.9.1",
     "smol-toml": "1.9.1"
   },
   "dependencies": {
