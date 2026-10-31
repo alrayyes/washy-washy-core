@@ -49,7 +49,7 @@ jobs:
           COMMIT: ${{ github.sha }}
         run: |
           sudo apt-get update
-          sudo apt-get install -y --no-install-recommends lcov=2.0-4ubuntu2
+          sudo apt-get install -y --no-install-recommends lcov=2.4-3
           pip install lcov_cobertura==2.1.1
           mkdir -p site/reports/tests site/reports/coverage
           cp junit.xml site/reports/tests/unit.xml
