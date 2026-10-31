@@ -1,3 +1,9 @@
+## [1.6.4](https://github.com/alrayyes/washy-washy-core/compare/v1.6.3...v1.6.4) (2026-10-31)
+
+### Bug Fixes
+
+* **deps:** override transitive deps to clear bun audit ([#135](https://github.com/alrayyes/washy-washy-core/issues/135)) ([9df1375](https://github.com/alrayyes/washy-washy-core/commit/9df137561d2303bfab50a9f5a6953ace65520d35)), closes [#133](https://github.com/alrayyes/washy-washy-core/issues/133)
+
 ## [1.6.3](https://github.com/alrayyes/washy-washy-core/compare/v1.6.2...v1.6.3) (2026-10-16)
 
 ### Bug Fixes
