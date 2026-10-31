@@ -85,7 +85,7 @@
     "sort-package-json": "4.1.0",
     "ts-json-schema-generator": "2.9.0",
     "tsd": "0.33.0",
-    "tsdown": "0.23.1",
+    "tsdown": "0.23.2",
     "typedoc": "0.28.20",
     "typescript": "6.0.3"
   },
