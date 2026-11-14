@@ -72,7 +72,7 @@
     "csv-parse": "7.0.3"
   },
   "devDependencies": {
-    "@biomejs/biome": "2.6.4",
+    "@biomejs/biome": "2.6.6",
     "@commitlint/cli": "21.2.4",
     "@commitlint/config-conventional": "21.2.4",
     "@hughescr/stryker-bun-runner": "1.6.0",
