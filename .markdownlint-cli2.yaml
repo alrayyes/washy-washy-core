@@ -15,6 +15,6 @@ ignores:
   # Vendored by `vale sync`. Generated text belongs to nobody.
   - "styles/Google/**"
   - "styles/proselint/**"
-  # Written by semantic-release from the commit subjects, and committed by
-  # the release job without passing through any hook.
+  # Written by release-please from the commit subjects, in its release pull
+  # request, without passing through any hook.
   - "CHANGELOG.md"

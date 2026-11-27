@@ -32,15 +32,18 @@ scans the whole history again on every pull request.
   [Conventional Commits](https://www.conventionalcommits.org/), linted by
   commitlint on every commit and, again, on the pull request title (a squash
   merge makes that title the commit that lands on `main`, and
-  [semantic-release](https://semantic-release.gitbook.io/) reads it to decide
-  the next version — `feat:` a minor, `fix:` a patch, a `BREAKING CHANGE:`
-  footer a major, and a pull request of only `docs:`/`chore:` releases
-  nothing).
+  [release-please](https://github.com/googleapis/release-please) reads it to
+  decide the next version — `feat:` a minor, `fix:` a patch, a
+  `BREAKING CHANGE:` footer a major, and a pull request of only
+  `docs:`/`chore:` releases nothing).
 - `bun run check` before you push — lint, typecheck, test, in that order. The
   pre-push hook runs the same commands, plus a gitleaks scan of the whole
   history, so a red push means something the hook itself couldn't catch
   (usually a merge in between).
 - Work lands through a pull request. Nothing is pushed directly to `main`.
+- Releases are cut by a release pull request that release-please keeps open.
+  It merges itself once green, and `release.yml` then tags it and publishes to
+  npm. Don't edit the version or `CHANGELOG.md` by hand.
 
 ## Commands
 
