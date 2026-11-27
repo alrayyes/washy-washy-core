@@ -1,6 +1,6 @@
-# Early warning for much of what CI checks, not all of it: the schema check,
-# Semgrep, LTeX, mutation testing and the dependency audit run only in CI
-# (.github/workflows/ci.yml).
+# Early warning for much of what CI checks, not all of it. Among others, the
+# schema check, the build job's checks on dist/, Semgrep, LTeX, mutation
+# testing and the dependency audit run only in CI (.github/workflows/ci.yml).
 pre-commit:
   parallel: true
   jobs:
