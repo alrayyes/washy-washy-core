@@ -1,3 +1,13 @@
+## [2.0.0](https://github.com/alrayyes/washy-washy-core/compare/v1.6.4...v2.0.0) (2026-11-27)
+
+### ⚠ BREAKING CHANGES
+
+* parseInstructions is gone. Parse the CSV yourself and pass the rows to instructionsFromRows, or use chartFromJson. The ./browser entry point still resolves and is now the same build as the root.
+
+### Features
+
+* remove the CSV parser and the csv-parse dependency ([#148](https://github.com/alrayyes/washy-washy-core/issues/148)) ([8727168](https://github.com/alrayyes/washy-washy-core/commit/872716818e56eaecf51d874331f9cb60efcc98f1)), closes [#147](https://github.com/alrayyes/washy-washy-core/issues/147)
+
 ## [1.6.4](https://github.com/alrayyes/washy-washy-core/compare/v1.6.3...v1.6.4) (2026-10-31)
 
 ### Bug Fixes
