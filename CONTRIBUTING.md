@@ -51,8 +51,8 @@ scans the whole history again on every pull request.
 - `bun test test/rows.test.ts` — one file, when iterating
 - `bun run build` — emit `dist/` via [tsdown](https://tsdown.dev)
 - `bun run docs` — build the [TypeDoc](https://typedoc.org) site into
-  `docs-site/` (gitignored; deployed by `.github/workflows/docs.yml` on push
-  to `main`, not part of `bun run check`)
+  `docs-site/` (gitignored; deployed by the `pages` job in
+  `.github/workflows/ci.yml` on push to `main`, not part of `bun run check`)
 - `bun run schema` — regenerate `schema/config.schema.json` from the
   `Config` type; `lint:schema` (part of `check`) fails if this would produce
   a diff, so run it after touching `Config`'s shape and commit the result
