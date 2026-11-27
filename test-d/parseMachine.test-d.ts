@@ -1,5 +1,5 @@
 import { expectType } from "tsd";
-import { type Machine, parseMachine } from "../src/index";
+import { type Machine, parseMachine } from "../dist/index.mjs";
 
 declare const machineFileContents: string;
 

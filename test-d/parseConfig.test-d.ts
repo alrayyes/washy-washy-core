@@ -1,5 +1,5 @@
 import { expectType } from "tsd";
-import { type Config, parseConfig } from "../src/index";
+import { type Config, parseConfig } from "../dist/index.mjs";
 
 declare const configFileContents: string;
 

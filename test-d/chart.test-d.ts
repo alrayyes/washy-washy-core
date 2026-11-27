@@ -1,5 +1,5 @@
 import { expectType } from "tsd";
-import { chartFromJson, chartToJson, type Instruction, type Machine } from "../src/index";
+import { chartFromJson, chartToJson, type Instruction, type Machine } from "../dist/index.mjs";
 
 declare const instructions: Instruction[];
 declare const machine: Machine;

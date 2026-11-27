@@ -1,5 +1,5 @@
 import { expectType } from "tsd";
-import { type Blocker, type Instruction, mixBlocker } from "../src/index";
+import { type Blocker, type Instruction, mixBlocker } from "../dist/index.mjs";
 
 declare const towels: Instruction;
 declare const socks: Instruction;
