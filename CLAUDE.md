@@ -30,7 +30,8 @@ schema` regenerates it from the `Config` type via
   diff. Change `Config`'s shape, run the script, commit both.
 - **One build, two import paths.** `@washy-washy/core/browser` resolves to the
   same files as `@washy-washy/core`. It was a separate build until 2.0.0, and
-  web and pdf still import it, so don't drop the export.
+  `washy-washy-web` and `washy-washy-pdf` still import it, so don't drop the
+  export.
 - **A bare `prettier --write .` reformats the TypeScript too**, fighting
   Biome's formatting and mangling every source file, unless `.prettierignore`
   is doing its job. Prettier is scoped to Markdown/YAML on purpose — if
