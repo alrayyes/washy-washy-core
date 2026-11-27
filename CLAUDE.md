@@ -54,9 +54,10 @@ schema` regenerates it from the `Config` type via
   written file through its own formatter after writing, same as `bun run
 schema` does for `schema/config.schema.json` in this repo. Confirmed by
   `washy-washy-cli` hitting this for real in its migration script.
-- **npm Trusted Publishing names `release.yml`, with no environment.** Rename
-  the file or add an `environment:` to its publish job and publishing fails
-  until the trusted publisher on npmjs.com matches. Publishing uses the
-  runner's npm (11.5.1 or newer), never a repo dependency.
+- **npm Trusted Publishing names `release.yml`, with no environment.** If the
+  file is renamed, or the publish job gains a deployment environment, npm
+  refuses to publish until the trusted publisher on npmjs.com matches. The
+  runner's own npm does the publishing (11.5.1 or newer), never a repo
+  dependency.
 - **`CHANGELOG.md` keeps its `# Changelog` title.** release-please inserts a
   new entry above the first version heading that follows a newline.
