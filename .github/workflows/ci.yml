@@ -1,5 +1,6 @@
-# Runs the same commands as the git hooks in lefthook.yml, so the two cannot
-# drift: the hook catches it early, this is the gate that cannot be skipped.
+# Overlaps with the git hooks in lefthook.yml but isn't a copy of them: some
+# checks run only here. A hook catches a problem early, this is the gate that
+# cannot be skipped.
 #
 # On a push to main it also publishes the API reference and the test and
 # coverage reports. A repo has one Pages deployment and a second one replaces
