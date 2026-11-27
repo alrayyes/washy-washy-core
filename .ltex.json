@@ -12,6 +12,7 @@
       "LanguageTool",
       "LTeX",
       "Prettier-linted",
+      "Semgrep",
       "TSDoc",
       "TypeDoc",
       "WinAnsi",
