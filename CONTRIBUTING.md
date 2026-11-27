@@ -45,7 +45,7 @@ scans the whole history again on every pull request.
 ## Commands
 
 - `bun run check` — everything CI checks, in one command
-- `bun test test/csv.test.ts` — one file, when iterating
+- `bun test test/rows.test.ts` — one file, when iterating
 - `bun run build` — emit `dist/` via [tsdown](https://tsdown.dev)
 - `bun run docs` — build the [TypeDoc](https://typedoc.org) site into
   `docs-site/` (gitignored; deployed by `.github/workflows/docs.yml` on push

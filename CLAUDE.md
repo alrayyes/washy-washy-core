@@ -7,21 +7,20 @@ Keep this short and only about what the code cannot say for itself.
 
 Chart parsing, machine validation and mixing rules — extracted from
 `alrayyes/washy-washy-cli`'s `packages/core`. No file I/O, no Bun/Node-only
-APIs in the public surface except `csv.ts` (see below).
+APIs, no runtime dependencies.
 
 ## Gotchas
 
-- **`csv.ts` is the only file that isn't safe for a browser bundle.**
-  `csv-parse` reaches for Node's `Buffer` at import time even when nothing
-  calls it, so anything that imports `./index` (which re-exports `csv.ts`)
-  into a bundled client dies on `Buffer is not defined`. `./browser` exists
-  specifically to exclude it — never add a new export to `browser.ts` that
-  transitively imports `csv.ts`.
+- **The whole package has to run in a browser.** `washy-washy-web` and
+  `washy-washy-pdf` bundle it, so nothing in `src/` may reach for Node,
+  directly or through a dependency. CI's `build` job fails if `dist/` imports
+  anything or mentions `Buffer`, `process` or `require`. There's no CSV parser
+  for that reason among others: it was removed in 2.0.0 (#147).
 - **This package has no file I/O.** Reading a machine or chart file from
   disk is a consumer's job (see `washy-washy-cli`'s `src/machine.ts` for the
   Bun-only adapter that wraps `parseMachine`). Adding `fs`/`Bun.file` calls
-  here would break the browser entry point and the whole point of splitting
-  this out.
+  here would break it in a browser and the whole point of splitting this
+  out.
 - **The published tarball ships only `dist/`, `schema/`, `README.md`,
   `LICENSE`** — see `files` in `package.json`. `npm pack --dry-run` before a
   release if you've touched that field or `tsdown.config.ts`.
@@ -29,12 +28,10 @@ APIs in the public surface except `csv.ts` (see below).
 schema` regenerates it from the `Config` type via
   `ts-json-schema-generator`; `lint:schema` (part of `check`) fails on any
   diff. Change `Config`'s shape, run the script, commit both.
-- **Two build targets, two entry points, on purpose.** `tsdown.config.ts`
-  builds `index.ts` and `browser.ts` as separate outputs rather than one
-  bundle with two `exports` pointing into it — that separation is what keeps
-  `Buffer`/`csv-parse` out of the browser build. Verify with
-  `grep -l Buffer dist/browser.mjs` (should find nothing) after touching the
-  build config.
+- **One build, two import paths.** `@washy-washy/core/browser` resolves to the
+  same files as `@washy-washy/core`. It was a separate build until 2.0.0, and
+  `washy-washy-web` and `washy-washy-pdf` still import it, so don't drop the
+  export.
 - **A bare `prettier --write .` reformats the TypeScript too**, fighting
   Biome's formatting and mangling every source file, unless `.prettierignore`
   is doing its job. Prettier is scoped to Markdown/YAML on purpose — if

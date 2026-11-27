@@ -1,7 +1,7 @@
 /**
  * The appliances a chart is drawn for, as data rather than code.
  *
- * Everything the PDFs render — dial angles, which chips exist, what a valid CSV
+ * Everything the PDFs render — dial angles, which chips exist, what a valid chart
  * value is — comes from a machine file, so pointing this at a different washing
  * machine is editing JSON rather than editing TypeScript. The labels in that
  * file are copied off the fascia in whatever language it is printed in, and

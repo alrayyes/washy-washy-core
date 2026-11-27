@@ -22,7 +22,7 @@ export const COLUMNS = [
   "reference_link",
 ] as const;
 
-/** One row, keyed the same way as a CSV column and the chart's JSON Schema. */
+/** One row, keyed the same way as the chart's JSON Schema. */
 export type Row = Record<(typeof COLUMNS)[number], string>;
 
 export class RowError extends Error {
@@ -84,9 +84,8 @@ function duration(row: number, column: string, value: string): string {
 }
 
 /**
- * Checks rows shaped like the chart's schema — the same shape a CSV parses
- * into, or a JSON file round-tripped through `rowsFromInstructions` — against
- * what the appliances in the machine file can actually be set to. A typo in a
+ * Checks rows shaped like the chart's schema, such as a JSON file
+ * round-tripped through `rowsFromInstructions`, against what the appliances in the machine file can actually be set to. A typo in a
  * programme name fails here rather than producing a PDF that tells you to turn
  * the dial to a position that does not exist — and so does a chart written for
  * a different machine than the one you passed.
@@ -111,9 +110,8 @@ export function instructionsFromRows(
   }
 
   return rows.map((record, index) => {
-    // +2: one for the header row, one because humans count from 1. Kept even
-    // for a JSON source, so an error message reads the same regardless of
-    // which format the chart came from.
+    // +2: one because humans count from 1, one for the header row a
+    // spreadsheet puts above the data.
     const row = index + 2;
 
     const clothingType = maxLength(row, "clothing_type", (record.clothing_type ?? "").trim(), 60);
@@ -198,7 +196,7 @@ export function rowsFromInstructions(instructions: Instruction[]): Row[] {
 /**
  * The JSON interchange format for a chart — the same row shape
  * a chart's JSON Schema describes, so a file written here validates against
- * it exactly as a CSV does.
+ * it.
  *
  * @example
  * ```ts
@@ -210,7 +208,7 @@ export function chartToJson(instructions: Instruction[]): string {
 }
 
 /**
- * The other half of `chartToJson`. Throws the same errors `parseInstructions` does.
+ * The other half of `chartToJson`. Throws the same errors `instructionsFromRows` does.
  *
  * @example
  * ```ts
