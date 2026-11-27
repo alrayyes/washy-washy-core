@@ -1,4 +1,8 @@
 {
+  // test-d imports the built dist/, which does not exist until `bun run build`,
+  // and which the pre-push hook rebuilds while tsc runs.
+  // tsd type-checks those files itself, in lint:types-d.
+  "exclude": ["node_modules", "dist", "test-d"],
   "compilerOptions": {
     // Environment setup & latest features
     "lib": ["ESNext"],
