@@ -1,16 +1,30 @@
 # Nobody picks a version by hand. The Conventional Commits that landed decide
-# it — feat: takes the minor, fix: the patch, a BREAKING CHANGE: footer the
-# major — and a merge of only docs: and chore: releases nothing at all.
+# it: feat: takes the minor, fix: the patch, a BREAKING CHANGE: footer the
+# major, and a merge of only docs: and chore: releases nothing at all.
 #
-# This is the one workflow that writes to main, and it writes the version,
-# the changelog, and the npm publish.
+# release-please opens and updates a release pull request, and merging that
+# pull request makes it cut the tag and the GitHub release through the API.
+# release-auto-merge.yml merges it once green. Nothing here pushes to main.
+#
+# npm Trusted Publishing is bound to this repo and to this file's name,
+# release.yml, with no environment. Renaming the file or adding an
+# `environment:` to the publish job breaks publishing until the trusted
+# publisher on npmjs.com is changed to match.
 name: release
 
 on:
-  workflow_run:
-    workflows: [check]
-    types: [completed]
+  push:
     branches: [main]
+  # For publishing an already-cut release again, when the npm job failed and a
+  # re-run isn't enough because this file needed a fix. The input is an
+  # existing tag, e.g. "v2.0.1". Otherwise use "Re-run failed jobs": npm builds
+  # provenance from the ref the run started on, so a dispatch from main
+  # publishes the tag's contents with an attestation naming main's head.
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: The existing tag to publish to npm
+        required: true
 
 permissions:
   contents: read
@@ -20,80 +34,65 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  release:
-    # `branches: [main]` above filters on the branch the triggering `check`
-    # run reports — for a `pull_request`-triggered run that's the PR's own
-    # HEAD branch, not the base it targets, so a fork PR whose head branch
-    # happens to be named `main` would still match. `event == 'push'` (only
-    # `check`'s `on.push` trigger, never `pull_request`) plus
-    # `head_repository.full_name == github.repository` (never a fork) is
-    # the actual guarantee that the checked-out `head_sha` below is this
-    # repo's own reviewed, already-merged code — semgrep's
-    # yaml.github-actions.security.workflow-run-target-code-checkout,
-    # flagged on first run, is a real gap the `branches:` filter alone
-    # doesn't close.
-    if: |
-      github.event.workflow_run.conclusion == 'success' &&
-      github.event.workflow_run.event == 'push' &&
-      github.event.workflow_run.head_repository.full_name == github.repository
+  release-please:
+    if: github.event_name == 'push'
     runs-on: ubuntu-latest
-    timeout-minutes: 15
-    permissions:
-      contents: write
-      issues: write
-      pull-requests: write
-      # OIDC token for npm Trusted Publishing + provenance. Linked on
-      # npmjs.com to this repo + this workflow file, after a one-time
-      # manual bootstrap publish (Trusted Publishing can't be linked
-      # before a scoped package exists at all — see #2).
-      id-token: write
+    timeout-minutes: 5
+    # release-please works through RELEASE_TOKEN, so GITHUB_TOKEN gets nothing.
+    permissions: {}
+    outputs:
+      release_created: ${{ steps.release.outputs.release_created }}
+      tag_name: ${{ steps.release.outputs.tag_name }}
     steps:
-      - name: Is the release token here?
-        id: token
-        run: |
-          if [ -n "$RELEASE_TOKEN" ]; then
-            echo "present=true" >> "$GITHUB_OUTPUT"
-          else
-            echo "present=false" >> "$GITHUB_OUTPUT"
-            echo "::notice::RELEASE_TOKEN is not set, so nothing was released. See #2."
-          fi
-        env:
-          RELEASE_TOKEN: ${{ secrets.RELEASE_TOKEN }}
-
-      # The rule matches on the checkout shape alone and can't see the job's
-      # `if:` above, which is the actual mitigation: this only runs for a
-      # `push`-triggered `check` run from this repo (never a fork, never a
-      # pull_request run), so `head_sha` here is already-merged, reviewed
-      # code on `main` — not an incoming PR's.
-      # nosemgrep: yaml.github-actions.security.workflow-run-target-code-checkout.workflow-run-target-code-checkout
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        if: steps.token.outputs.present == 'true'
+      # Not GITHUB_TOKEN: a pull request it opens gets no `check` run, so the
+      # release pull request could never go green.
+      - uses: googleapis/release-please-action@45996ed1f6d02564a971a2fa1b5860e934307cf7 # v5.0.0
+        id: release
         with:
           token: ${{ secrets.RELEASE_TOKEN }}
-          fetch-depth: 0
-          ref: ${{ github.event.workflow_run.head_sha }}
+
+  # A job here, not an `on: release` workflow: Trusted Publishing names this
+  # file.
+  publish-npm:
+    needs: release-please
+    # always(): workflow_dispatch skips release-please, and a skipped `needs:`
+    # job would otherwise skip this one too.
+    if: |
+      always() &&
+      (
+        (github.event_name == 'push' && needs.release-please.outputs.release_created == 'true') ||
+        github.event_name == 'workflow_dispatch'
+      )
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+      # The OIDC token for npm Trusted Publishing and provenance. No npm token.
+      id-token: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          # refs/tags/ so a dispatch input like "main" can't publish a branch.
+          ref: refs/tags/${{ needs.release-please.outputs.tag_name || inputs.tag }}
 
       - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0
-        if: steps.token.outputs.present == 'true'
         with:
           bun-version: 1.4.0
 
-      # bun installs it; Node runs it — semantic-release checks the runtime
-      # version at startup and refuses anything outside ^22.14 || >=24.10.
+      # bun installs and builds; the npm bundled with this Node publishes.
+      # Trusted Publishing needs npm 11.5.1 or newer, and this one has 11.19.1.
       - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
-        if: steps.token.outputs.present == 'true'
         with:
-          node-version: 24.10.0
+          node-version: 24.22.3
           registry-url: https://registry.npmjs.org
 
       - run: bun install --frozen-lockfile
-        if: steps.token.outputs.present == 'true'
-
-      - run: bun run build
-        if: steps.token.outputs.present == 'true'
-
-      - run: ./node_modules/.bin/semantic-release
-        if: steps.token.outputs.present == 'true'
         env:
           LEFTHOOK: "0"
-          GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
+
+      - run: bun run build
+
+      # LEFTHOOK=0 again: npm publish runs the `prepare` script.
+      - run: npm publish --provenance --access public
+        env:
+          LEFTHOOK: "0"
