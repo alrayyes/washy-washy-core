@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.0.1](https://github.com/alrayyes/washy-washy-core/compare/v2.0.0...v2.0.1) (2026-11-27)
+
+
+### Miscellaneous Chores
+
+* release 2.0.1 ([#166](https://github.com/alrayyes/washy-washy-core/issues/166)) ([b92f9ba](https://github.com/alrayyes/washy-washy-core/commit/b92f9ba3290b310e4a85fe9daab2b052eb2b1f30))
+
 ## [2.0.0](https://github.com/alrayyes/washy-washy-core/compare/v1.6.4...v2.0.0) (2026-11-27)
 
 ### ⚠ BREAKING CHANGES
