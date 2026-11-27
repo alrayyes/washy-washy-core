@@ -36,10 +36,10 @@ scans the whole history again on every pull request.
   decide the next version — `feat:` a minor, `fix:` a patch, a
   `BREAKING CHANGE:` footer a major, and a pull request of only
   `docs:`/`chore:` releases nothing).
-- `bun run check` before you push — lint, typecheck, test, in that order. The
-  pre-push hook runs the same commands, plus a gitleaks scan of the whole
-  history, so a red push means something the hook itself couldn't catch
-  (usually a merge in between).
+- `bun run check` before you push. The pre-push hook runs all of it except
+  `lint:schema`, plus a gitleaks scan of the whole history. A stale generated
+  schema gets through the hook, and CI also runs jobs that neither one does,
+  such as Semgrep, LTeX and mutation testing.
 - Work lands through a pull request. Nothing is pushed directly to `main`.
 - Releases are cut by a release pull request that release-please keeps open.
   It merges itself once green, and `release.yml` then tags it and publishes to
@@ -47,7 +47,8 @@ scans the whole history again on every pull request.
 
 ## Commands
 
-- `bun run check` — everything CI checks, in one command
+- `bun run check` — lint, the schema check, type checks and tests, in one
+  command
 - `bun test test/rows.test.ts` — one file, when iterating
 - `bun run build` — emit `dist/` via [tsdown](https://tsdown.dev)
 - `bun run docs` — build the [TypeDoc](https://typedoc.org) site into
