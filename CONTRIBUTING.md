@@ -44,6 +44,10 @@ scans the whole history again on every pull request.
 - Releases are cut by a release pull request that release-please keeps open.
   It merges itself once green, and `release.yml` then tags it and publishes to
   npm. Don't edit the version or `CHANGELOG.md` by hand.
+- To force a version when nothing releasable has landed, put a
+  `Release-As: x.y.z` footer on a commit that changes a file. release-please
+  skips a commit here if it's empty or only touches the `exclude-paths` in
+  `release-please-config.json`.
 
 ## Commands
 
