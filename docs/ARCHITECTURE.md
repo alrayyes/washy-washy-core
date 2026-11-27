@@ -17,23 +17,19 @@ src/
   machine.ts   parseMachine and friends. Validates a washer/iron description
                (programmes, temperatures, spins, iron thermostat positions)
                into a typed Machine.
-  rows.ts      instructionsFromRows / rowsFromInstructions and the CSV<->JSON
-               shared row shape (Row, COLUMNS). Validates a chart's rows
-               against a Machine. chartFromJson/chartToJson are the JSON side.
-  csv.ts       parseInstructions — the CSV-specific wrapper around
-               instructionsFromRows. The only file that imports csv-parse,
-               which is why it's excluded from browser.ts (see Gotchas below).
+  rows.ts      instructionsFromRows / rowsFromInstructions and the row shape
+               (Row, COLUMNS). Validates a chart's rows against a Machine.
+               chartFromJson/chartToJson are the JSON side.
   config.ts    parseConfig/configFromJson/configToJson — a Machine and its
                chart validated together as one { machine, chart } object.
   mixing.ts    mixBlocker/canMix/resolve/loadGroups and the card/wash/iron
                grouping functions. Depends only on types.ts — no machine or
                row-parsing knowledge, since mixing rules apply to already-
                validated Instructions.
-  index.ts     Barrel re-exporting everything, including csv.ts. Node/Bun
-               entry point.
-  browser.ts   Same barrel minus csv.ts. Browser bundle entry point.
+  index.ts     Barrel re-exporting everything. The only entry point:
+               package.json's "." and "./browser" both resolve to its build.
 
-test/          One *.test.ts per src module. Unit tests only — see
+test/          *.test.ts, mostly one per src module. Unit tests only — see
                CONTRIBUTING.md for why.
 schema/        config.schema.json, generated from the Config type by
                `bun run schema` — never hand-edited.
@@ -53,8 +49,8 @@ set to.
 ```mermaid
 flowchart LR
     MJ["machine JSON\n(unknown)"] -->|parseMachine| M["Machine"]
-    CJ["chart CSV"] -->|parseInstructions| RF
-    RJ["chart JSON rows"] -->|chartFromJson| RF["instructionsFromRows"]
+    CR["chart rows"] --> RF
+    RJ["chart JSON"] -->|chartFromJson| RF["instructionsFromRows"]
     M --> RF
     RF --> I["Instruction[]"]
     I -->|resolve / loadGroups| RI["ResolvedInstruction[] / groups"]
@@ -66,16 +62,15 @@ flowchart LR
 it arrived embedded with, never a different one passed in separately.
 
 Everything downstream of `Instruction[]` (`mixing.ts`) only ever reads
-already-validated data — it has no machine or parsing knowledge of its own,
-which is why `browser.ts` can include it with no `Buffer` risk.
+already-validated data — it has no machine or parsing knowledge of its own.
 
 ## Naming: camelCase in TypeScript, snake_case on the wire
 
-`Instruction` fields are camelCase (`clothingType`, `fabricSoftener`). The CSV
-header and the JSON row shape (`Row`, `COLUMNS` in `rows.ts`) are snake_case
-(`clothing_type`, `fabric_softener`) — the CSV/JSON side is what a human edits
-by hand or a spreadsheet exports, and snake_case is the convention the rest of
-the chart format (and the generated JSON Schema) already uses.
+`Instruction` fields are camelCase (`clothingType`, `fabricSoftener`). The row
+shape (`Row`, `COLUMNS` in `rows.ts`) is snake_case (`clothing_type`,
+`fabric_softener`) — that side is what a human edits by hand or a spreadsheet
+exports, and snake_case is the convention the rest of the chart format (and the
+generated JSON Schema) already uses.
 `instructionsFromRows`/`rowsFromInstructions` are the only place that
 translates between the two; nothing else needs to know both shapes exist.
 

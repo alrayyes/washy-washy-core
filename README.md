@@ -9,10 +9,10 @@
 Chart parsing, machine validation, and mixing rules for
 [washy-washy](https://github.com/alrayyes/washy-washy-cli), a laundry chart
 generator. This package holds no rendering or file I/O — just the pure logic
-a CSV/JSON chart is checked and reasoned about with, shared by the CLI, the
+a chart is checked and reasoned about with, shared by the CLI, the
 web app, and [`@washy-washy/pdf`](https://github.com/alrayyes/washy-washy-pdf).
 
-**Jump to:** [Browser](#browser) · [Node and Bun (CSV)](#node-and-bun-csv) ·
+**Jump to:** [Usage](#usage) · [Coming from CSV](#coming-from-csv) ·
 [What's in it](#whats-in-it) · [Development](#development) ·
 [API reference](https://alrayyes.github.io/washy-washy-core/)
 
@@ -29,45 +29,40 @@ web app, and [`@washy-washy/pdf`](https://github.com/alrayyes/washy-washy-pdf).
 npm install @washy-washy/core
 ```
 
-## Two entry points
-
-| Import                      | Use when                          | Includes                          |
-| --------------------------- | --------------------------------- | --------------------------------- |
-| `@washy-washy/core/browser` | Bundled for a browser             | Everything except CSV parsing     |
-| `@washy-washy/core`         | Node/Bun, reading a CSV from disk | Everything, including CSV parsing |
-
-`@washy-washy/core`'s CSV parser depends on `csv-parse`, which reaches for
-Node's `Buffer` at import time even if nothing calls it — a bundler ships
-that reference into the client, and it dies at runtime with
-`Buffer is not defined`. `@washy-washy/core/browser` excludes it: a browser
-consumer reads and writes charts as JSON instead (`chartFromJson`/
-`chartToJson`), which needs no such dependency.
-
 ## Usage
 
-### Browser
-
-Read and write a chart as JSON instead of CSV — `@washy-washy/core/browser`
-has no CSV parser (see [Two entry points](#two-entry-points)).
+Hand a chart over as JSON, or as rows you've already read from somewhere else.
 
 ```ts
-import {
-  chartFromJson,
-  chartToJson,
-  parseMachine,
-} from "@washy-washy/core/browser";
+import { chartFromJson, chartToJson, parseMachine } from "@washy-washy/core";
 
 const machine = parseMachine(machineConfig);
 const instructions = chartFromJson(jsonFromStorage, machine);
+const json = chartToJson(instructions);
 ```
 
-### Node and Bun (CSV)
+`@washy-washy/core/browser` still works and exports the same thing as
+`@washy-washy/core`. Nothing here needs Node, so either one bundles for a
+browser.
+
+### Coming from CSV
+
+Version 2 removed `parseInstructions` and the CSV parser with it. Read the file
+with the parser of your choice and pass the records to `instructionsFromRows`.
+With [`csv-parse`](https://csv.js.org/parse/), these options match what
+`parseInstructions` did:
 
 ```ts
-import { parseInstructions, parseMachine } from "@washy-washy/core";
+import { instructionsFromRows } from "@washy-washy/core";
+import { parse } from "csv-parse/sync";
 
-const machine = parseMachine(JSON.parse(machineFileContents));
-const instructions = parseInstructions(csvFileContents, machine);
+const rows: Record<string, string>[] = parse(csvFileContents, {
+  bom: true,
+  columns: true,
+  skip_empty_lines: true,
+  trim: true,
+});
+const instructions = instructionsFromRows(rows, machine);
 ```
 
 ### What's in it
@@ -79,7 +74,7 @@ const instructions = parseInstructions(csvFileContents, machine);
 - **`parseMachine`** validates a machine description (washer programmes,
   temperatures, spins, options; iron thermostat positions) and hands back a
   typed `Machine`. Every failure names the field that's wrong.
-- **`parseInstructions`** (CSV) and **`chartFromJson`**/**`chartToJson`**
+- **`instructionsFromRows`** (rows) and **`chartFromJson`**/**`chartToJson`**
   (JSON) parse a chart against a `Machine`, rejecting any row that asks for a
   setting the machine doesn't have. `duration` is checked too, against
   `~H:MM` (the `~` is optional) — empty is still fine, for a pile with no

@@ -127,9 +127,10 @@ jobs:
       - run: bun install --frozen-lockfile
       - run: bun run mutation
 
-  # Proves the package actually builds and ships the two entry points it
-  # claims to, and that the browser one never pulls Buffer/csv-parse in —
-  # the whole reason it exists apart from the full one.
+  # Proves the package builds, that both import paths it publishes resolve,
+  # and that the output stays free of Node: web and pdf bundle it for a
+  # browser. With no runtime dependencies there is nothing to import, so any
+  # import statement is a regression too.
   build:
     runs-on: ubuntu-latest
     timeout-minutes: 10
@@ -140,12 +141,18 @@ jobs:
           bun-version: 1.4.0
       - run: bun install --frozen-lockfile
       - run: bun run build
-      - name: Confirm the browser build stays Node-free
+      - name: Confirm the build stays Node-free
         run: |
-          if grep -lE 'Buffer|csv-parse' dist/browser.mjs; then
-            echo "::error::dist/browser.mjs references Buffer or csv-parse"
+          if grep -nE '^import |^export .* from |\bimport\(|require\(|node:|\bBuffer\b|\bprocess\.' dist/*.mjs; then
+            echo "::error::dist/ imports something or references a Node global"
             exit 1
           fi
+      - name: Confirm both import paths resolve
+        run: |
+          node --input-type=module -e '
+            await import("@washy-washy/core");
+            await import("@washy-washy/core/browser");
+          '
       - run: npm pack --dry-run
 
   # SAST: cross-file taint tracking Biome's pattern-based linting can't do.

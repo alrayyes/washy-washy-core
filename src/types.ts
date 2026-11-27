@@ -10,10 +10,10 @@ export const mixTags = ["lint-shedder", "lint-magnet", "dye-bleeder", "solo"] as
 export type MixTag = (typeof mixTags)[number];
 
 /**
- * One CSV row: everything needed to wash, iron and dry one pile of laundry.
+ * One chart row: everything needed to wash, iron and dry one pile of laundry.
  *
  * The machine-facing fields are plain strings rather than unions, because what
- * counts as valid depends on the machine file you point this at. `csv.ts`
+ * counts as valid depends on the machine file you point this at. `rows.ts`
  * checks each of them against that machine as it parses, so nothing downstream
  * has to wonder whether a programme name exists.
  */
