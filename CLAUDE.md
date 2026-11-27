@@ -54,11 +54,9 @@ schema` regenerates it from the `Config` type via
   written file through its own formatter after writing, same as `bun run
 schema` does for `schema/config.schema.json` in this repo. Confirmed by
   `washy-washy-cli` hitting this for real in its migration script.
-- **The `release` job's first-ever run needs a human, twice.** Once for a
-  one-time manual `npm publish --access public` from a local machine (npm's
-  Trusted Publishing can't be linked before the scoped package exists at all
-  — there's no pre-registration path for a brand-new scope), and once more
-  to flip that first publish from restricted to public, since a scoped
-  package defaults to restricted regardless of `publishConfig.access` in
-  `package.json` when published outside CI. Every release after that is
-  unattended.
+- **npm Trusted Publishing names `release.yml`, with no environment.** Rename
+  the file or add an `environment:` to its publish job and publishing fails
+  until the trusted publisher on npmjs.com matches. Publishing uses the
+  runner's npm (11.5.1 or newer), never a repo dependency.
+- **`CHANGELOG.md` keeps its `# Changelog` title.** release-please inserts a
+  new entry above the first version heading that follows a newline.

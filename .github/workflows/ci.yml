@@ -260,7 +260,7 @@ jobs:
       - run: bun run lint:prose:advice
 
   # The commit-msg hook already reads every message, but a hook is skippable
-  # and these messages are load-bearing: semantic-release reads the
+  # and these messages are load-bearing: release-please reads the
   # Conventional Commits that landed to decide the next version.
   commits:
     if: github.event_name == 'pull_request' && github.actor != 'dependabot[bot]'

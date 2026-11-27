@@ -1,0 +1,39 @@
+{
+  "$schema": "https://raw.githubusercontent.com/googleapis/release-please/main/schemas/config.json",
+  "release-type": "node",
+  "include-component-in-tag": false,
+  "packages": {
+    ".": {
+      "exclude-paths": [
+        ".editorconfig",
+        ".gitattributes",
+        ".github",
+        ".gitignore",
+        ".gitleaks.toml",
+        ".ltex.json",
+        ".markdownlint-cli2.yaml",
+        ".prettierignore",
+        ".prettierrc",
+        ".vale.ini",
+        "CHANGELOG.md",
+        "CLAUDE.md",
+        "CONTRIBUTING.md",
+        "LICENSE",
+        "README.md",
+        "SECURITY.md",
+        "biome.json",
+        "codecov.yml",
+        "commitlint.config.js",
+        "docs",
+        "lefthook.yml",
+        "llms.txt",
+        "scripts",
+        "stryker.config.mjs",
+        "styles",
+        "test",
+        "test-d",
+        "typedoc.json"
+      ]
+    }
+  }
+}
