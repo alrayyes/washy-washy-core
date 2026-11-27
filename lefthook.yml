@@ -72,3 +72,6 @@ pre-push:
       run: bun run typecheck
     - name: test
       run: bun test
+    # typecheck leaves test-d/ out, so this is what type-checks it.
+    - name: types-d
+      run: bun run lint:types-d
