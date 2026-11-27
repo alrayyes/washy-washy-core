@@ -1,5 +1,5 @@
 # Merges here are squashes, so the pull request title becomes the subject of
-# the commit that lands on main, and semantic-release reads nothing else.
+# the commit that lands on main, and release-please reads nothing else.
 #
 # A maintained action rather than a hand-rolled commitlint pipe: commitlint
 # itself has no PR-title mode, it only ever reads commit objects, so linting

@@ -1,3 +1,5 @@
+# Changelog
+
 ## [2.0.0](https://github.com/alrayyes/washy-washy-core/compare/v1.6.4...v2.0.0) (2026-11-27)
 
 ### ⚠ BREAKING CHANGES
