@@ -4,36 +4,7 @@
   "include-component-in-tag": false,
   "packages": {
     ".": {
-      "exclude-paths": [
-        ".editorconfig",
-        ".gitattributes",
-        ".github",
-        ".gitignore",
-        ".gitleaks.toml",
-        ".ltex.json",
-        ".markdownlint-cli2.yaml",
-        ".prettierignore",
-        ".prettierrc",
-        ".vale.ini",
-        "CHANGELOG.md",
-        "CLAUDE.md",
-        "CONTRIBUTING.md",
-        "LICENSE",
-        "README.md",
-        "SECURITY.md",
-        "biome.json",
-        "codecov.yml",
-        "commitlint.config.js",
-        "docs",
-        "lefthook.yml",
-        "llms.txt",
-        "scripts",
-        "stryker.config.mjs",
-        "styles",
-        "test",
-        "test-d",
-        "typedoc.json"
-      ]
+      "exclude-paths": [".github", "docs", "scripts", "styles", "test", "test-d"]
     }
   }
 }

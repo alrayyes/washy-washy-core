@@ -19,17 +19,21 @@ on:
   pull_request:
     types: [opened, synchronize, reopened, labeled]
 
-permissions:
-  contents: write
-  pull-requests: write
+# The merge goes through RELEASE_TOKEN, so GITHUB_TOKEN gets nothing.
+permissions: {}
 
 jobs:
   auto-merge:
     # release-please labels its own pull request "autorelease: pending"
     # and re-labels it "autorelease: tagged" once merged -- checking the
     # label rather than the actor, since the PR is opened by whichever
-    # identity runs googleapis/release-please-action, not a bot account.
-    if: "contains(github.event.pull_request.labels.*.name, 'autorelease: pending')"
+    # identity runs googleapis/release-please-action, not a bot account. The
+    # repo and branch checks keep any other pull request carrying that label
+    # away from the step that holds RELEASE_TOKEN.
+    if: >-
+      contains(github.event.pull_request.labels.*.name, 'autorelease: pending') &&
+      github.event.pull_request.head.repo.full_name == github.repository &&
+      startsWith(github.event.pull_request.head.ref, 'release-please--')
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:

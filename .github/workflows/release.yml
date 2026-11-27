@@ -17,7 +17,9 @@ on:
     branches: [main]
   # For publishing an already-cut release again, when the npm job failed and a
   # re-run isn't enough because this file needed a fix. The input is an
-  # existing tag, e.g. "v2.0.1".
+  # existing tag, e.g. "v2.0.1". Otherwise use "Re-run failed jobs": npm builds
+  # provenance from the ref the run started on, so a dispatch from main
+  # publishes the tag's contents with an attestation naming main's head.
   workflow_dispatch:
     inputs:
       tag:
@@ -36,10 +38,8 @@ jobs:
     if: github.event_name == 'push'
     runs-on: ubuntu-latest
     timeout-minutes: 5
-    permissions:
-      contents: write
-      issues: write
-      pull-requests: write
+    # release-please works through RELEASE_TOKEN, so GITHUB_TOKEN gets nothing.
+    permissions: {}
     outputs:
       release_created: ${{ steps.release.outputs.release_created }}
       tag_name: ${{ steps.release.outputs.tag_name }}
@@ -72,7 +72,8 @@ jobs:
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
-          ref: ${{ needs.release-please.outputs.tag_name || inputs.tag }}
+          # refs/tags/ so a dispatch input like "main" can't publish a branch.
+          ref: refs/tags/${{ needs.release-please.outputs.tag_name || inputs.tag }}
 
       - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0
         with:
